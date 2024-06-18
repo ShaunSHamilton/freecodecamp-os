@@ -1,0 +1,10 @@
+[package]
+authors = ["Shaun Hamilton"]
+edition = "2021"
+name = "config"
+version = "0.1.0"
+
+[dependencies]
+serde = { version = "1.0.202", features = ["derive"] }
+runner = { path = "../runner" }
+config = { path = "../config" }
