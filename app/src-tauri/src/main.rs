@@ -1,53 +1,50 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+use std::time::Duration;
+use tauri::async_runtime::Receiver;
 use tauri::{AppHandle, Manager, Window};
 use tauri_plugin_shell::process::CommandEvent;
-use tauri_plugin_shell::ShellExt;
+// use tauri_plugin_shell::ShellExt;
+use tokio::time::timeout;
 
 #[tauri::command]
-fn start_server(app: AppHandle, _window: Window) -> String {
+async fn start_server(_app: AppHandle, _window: Window) -> Result<(), String> {
     println!("Starting server");
-    let test_command = app.shell().sidecar("test_bin").unwrap();
-    let (mut rx, mut _child) = test_command.spawn().expect("Failed to spawn test");
-
-    tauri::async_runtime::spawn(async move {
-        // read events such as stdout
-        while let Some(event) = rx.recv().await {
-            if let CommandEvent::Stdout(line) = event {
-                // window
-                //     .emit("message", Some(format!("'{:?}'", line)))
-                //     .expect("failed to emit event");
-                // // write to stdin
-                // child.write("message\n".as_bytes()).unwrap();
-                println!("{:?}", line);
-            }
-        }
-    });
-
-    let code_server_command = app.shell().sidecar("code-server").unwrap();
-    let (mut _rx, mut _child) = code_server_command
-        .spawn()
-        .expect("Failed to spawn code-server");
-    "Server started".to_string()
+    Ok(())
 }
 
-#[tauri::command]
-async fn check_server() -> Result<(), String> {
-    let res = reqwest::get("http://localhost:8080/healthz").await;
-    match res {
-        Ok(response) => {
-            if response.status().is_success() {
-                Ok(())
-            } else {
-                Err("Server is not running".to_string())
+async fn _process_events(rx: &mut Receiver<CommandEvent>) -> Result<(), String> {
+    let result = timeout(Duration::from_secs(3), async {
+        while let Some(event) = rx.recv().await {
+            match event {
+                CommandEvent::Stdout(line) => {
+                    let mes = line.escape_ascii().to_string();
+                    println!("{}", mes);
+                }
+                CommandEvent::Stderr(line) => {
+                    let mes = line.escape_ascii().to_string();
+                    return Err(mes);
+                }
+                _ => {}
             }
         }
-        Err(_) => Err("Server is not running".to_string()),
+        Ok(())
+    })
+    .await;
+
+    match result {
+        Ok(res) => res,
+        Err(_) => Ok(()), // Timeout occurred
     }
 }
 
 #[tauri::command]
-async fn stop_server(app: AppHandle, _window: Window) -> String {
+async fn check_server() -> Result<(), String> {
+    todo!()
+}
+
+#[tauri::command]
+async fn stop_server(_app: AppHandle, _window: Window) -> String {
     todo!()
 }
 

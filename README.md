@@ -14,6 +14,11 @@ Start docs server:
 
 ## Structure
 
+- `/app` desktop application
+  - `bins/` external binaries included in app
+  - `dist/` frontend build
+  - `src/` frontend source
+  - `src-tauri/` backend source
 - `/cli` cli
 - `/client` client
   - `dist/` build

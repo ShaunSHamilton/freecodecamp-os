@@ -12,17 +12,6 @@
     "resources:default",
     "menu:default",
     "tray:default",
-    {
-      "identifier": "shell:allow-execute",
-      "allow": [
-        {
-          "args": [],
-          "cmd": "",
-          "name": "../bins/code-server",
-          "sidecar": true
-        }
-      ]
-    },
     "shell:allow-open"
   ]
 }

@@ -12,14 +12,12 @@ export function App() {
       btn.disabled = true;
     }
     setBtnText("...");
-    const serverStatus = await invoke("check_server");
-    if (serverStatus) {
-      const res = await invoke("stop_server");
-      console.log(res);
+    try {
+      await invoke("check_server");
+      await invoke("stop_server");
       setBtnText("Start Server");
-    } else {
-      const res = await invoke("start_server");
-      console.log(res);
+    } catch (e) {
+      await invoke("start_server");
       setBtnText("Stop Server");
     }
     if (btn) {
@@ -30,10 +28,11 @@ export function App() {
   useEffect(() => {
     // Check if server is already running
     (async () => {
-      const res = await invoke("check_server");
-      console.log(res);
-      if (!res) {
+      try {
+        await invoke("check_server");
         setBtnText("Stop Server");
+      } catch (e) {
+        setBtnText("Start Server");
       }
     })();
   }, []);
