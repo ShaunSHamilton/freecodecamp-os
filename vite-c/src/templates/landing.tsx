@@ -1,30 +1,30 @@
-import { getRouteApi } from "@tanstack/react-router";
-import { Selection } from "../components/selection";
-// import { Events, FreeCodeCampConf, ProjectI } from "../types";
-import "./landing.css";
-import { FreeCodeCampConf, Locale, Project } from "../types.ts";
+import { useQuery } from "@tanstack/react-query";
 
-// interface LandingProps {
-//   sock: (type: Events, data: unknown) => void;
-//   projects: ProjectI[];
-//   freeCodeCampConfig: FreeCodeCampConf;
-//   locale: string;
-// }
+import { FreeCodeCampConf, Locale, Project } from "../types.ts";
+import { Selection } from "../components/selection";
+import "./landing.css";
 
 export const Landing = () => {
-  // export const Landing = ({
-  //   sock,
-  //   projects,
-  //   freeCodeCampConfig,
-  //   locale,
-  // }: LandingProps) => {
-  const routeApi = getRouteApi("/");
-  const { config, state, projects } = routeApi.useLoaderData();
+  const { isPending, isError, data, error } = useQuery({
+    queryKey: ["landing"],
+    queryFn: landingLoader,
+  });
 
-  const title = config.client.landing[state.locale].title;
+  if (isPending) {
+    return <h1>LOading</h1>;
+  }
+
+  if (isError) {
+    return <h1>{error.message}</h1>;
+  }
+
+  const { config, state, projects } = data;
+
   return (
     <>
-      {title && <h1>{title}</h1>}
+      {config.client.landing[state.locale].title && (
+        <h1>{config.client.landing[state.locale].title}</h1>
+      )}
       <p className="description">
         {config.client.landing[state.locale].description}
       </p>

@@ -1,16 +1,25 @@
+import { useQuery } from "@tanstack/react-query";
+
+import { FreeCodeCampConf, Lesson, Project } from "../types";
 import { Description } from "../components/description";
 import { Heading } from "../components/heading";
-import { FreeCodeCampConf, Lesson, Project } from "../types";
 import "./project.css";
-import { getRouteApi, useParams } from "@tanstack/react-router";
 
-export const ProjectLesson = () => {
-  const params = useParams({ strict: false });
+export const ProjectLesson = ({ project_id, lesson_id }) => {
+  const { isPending, isError, data, error } = useQuery({
+    queryKey: ["project", project_id, lesson_id],
+    queryFn: async () => projectLoader({ project_id, lesson_id }),
+  });
 
-  const routeApi = getRouteApi(
-    `/project/${params.project_id}/${params.lesson_id}`
-  );
-  const { project, lesson, config } = routeApi.useLoaderData();
+  if (isPending) {
+    return <h1>Loading</h1>;
+  }
+
+  if (isError) {
+    return <h1>{error.message}</h1>;
+  }
+
+  const { project, lesson, config } = data;
   return (
     <>
       <div className="container">
@@ -51,7 +60,7 @@ export const ProjectLesson = () => {
   );
 };
 
-export const projectLoader = async ({ params: { project_id, lesson_id } }) => {
+async function projectLoader({ project_id, lesson_id }) {
   const project: Project = await (await fetch(`/project/${project_id}`)).json();
   const config: FreeCodeCampConf = await (await fetch("/config")).json();
   const lesson: Lesson = await (
@@ -63,4 +72,4 @@ export const projectLoader = async ({ params: { project_id, lesson_id } }) => {
     config,
     lesson,
   };
-};
+}
