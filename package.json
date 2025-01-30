@@ -1,0 +1,32 @@
+{
+  "name": "freecodecamp-os",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite ./vite-c",
+    "build:client": "tsc -p ./vite-c/tsconfig.json && vite build ./vite-c",
+    "lint": "eslint .",
+    "tsc": "tsc",
+    "preview": "vite preview ./vite-c",
+    "watch": "watchexec -r -w 'vite-c' -i 'vite-c/dist' -w 'server' -- 'npm run build:client && cargo run -p freecodecamp-os'",
+    "type": "typeshare ./server --lang=typescript --output-file='./vite-c/src/types.ts'"
+  },
+  "dependencies": {
+    "@tanstack/react-router": "1.98.0",
+    "marked": "15.0.6",
+    "marked-highlight": "2.2.1",
+    "prismjs": "1.29.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  },
+  "devDependencies": {
+    "@tanstack/router-plugin": "1.98.0",
+    "@types/prismjs": "1.26.5",
+    "@types/react": "19.0.8",
+    "@types/react-dom": "19.0.3",
+    "@vitejs/plugin-react": "4.3.4",
+    "typescript": "5.7.3",
+    "vite": "6.0.11"
+  }
+}

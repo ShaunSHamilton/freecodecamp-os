@@ -1,2 +1,9 @@
 pub mod runners;
-pub runners::runner::Runner;
+
+pub struct Test {
+    pub runner: Box<dyn runners::runner::Runner>,
+    pub test_string: String,
+    pub test_code: String,
+}
+
+pub type Tests = Vec<Test>;

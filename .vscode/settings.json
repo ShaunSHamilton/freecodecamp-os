@@ -1,3 +1,9 @@
 {
-  "rust-analyzer.linkedProjects": ["app/src-tauri/Cargo.toml"]
+  "rust-analyzer.linkedProjects": [
+    "app/src-tauri/Cargo.toml",
+    "runner/Cargo.toml",
+    "server/Cargo.toml",
+    "parser/Cargo.toml"
+  ],
+  "dependi.rust.unstableFilter": "IncludeIfUnstable"
 }

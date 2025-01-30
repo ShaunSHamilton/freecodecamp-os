@@ -1,44 +1,67 @@
 use std::collections::HashMap;
 
+use serde::{Deserialize, Serialize};
+use typeshare::typeshare;
+
+#[typeshare]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct FreeCodeCampConf {
-    pub version: Version,
+    pub client: Client,
+    pub version: String,
 }
 
-pub struct Version {
-    pub major: u16,
-    pub minor: u16,
-    pub patch: u16,
+#[typeshare]
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Client {
+    landing: HashMap<Locale, Landing>,
 }
 
-pub struct Project {
-    pub id: u16,
+#[typeshare]
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Landing {
+    pub title: String,
+    pub description: String,
+    pub faq_link: String,
+    pub faq_text: String,
 }
 
-pub struct State {
-    pub locale: Locale,
-}
-
+#[typeshare]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[serde(rename_all = "lowercase")]
 pub enum Locale {
     En,
     Af,
 }
 
-pub struct Lesson {
-    pub description: String,
-    pub hooks: Vec<Hook>,
+#[typeshare]
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Project {
     pub id: u16,
-    pub meta: HashMap<String, String>,
-    pub seed: Vec<Seed>,
-    pub tests: Vec<Test>,
-    pub title: String,
+    pub dashed_name: String,
 }
 
+#[typeshare]
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Lesson {
+    pub description: String,
+    // pub hooks: Vec<Hook>,
+    pub id: u16,
+    // pub meta: HashMap<String, String>,
+    // pub seed: Vec<Seed>,
+    // pub tests: Vec<Test>,
+    // pub title: String,
+}
+
+#[typeshare]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Test {
-    pub runner: Runner,
+    // pub runner: Runner,
     pub test_string: String,
     pub test_code: String,
 }
 
+#[typeshare]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum Hook {
     BeforeAll(String),
     BeforeEach(String),
@@ -46,7 +69,9 @@ pub enum Hook {
     AfterEach(String),
 }
 
+#[typeshare]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Seed {
-    pub runner: Runner,
+    // pub runner: Runner,
     pub seed_code: String,
 }

@@ -1,4 +1,4 @@
-use config::Test;
+use crate::Tests;
 
 pub trait Runner {
     fn run(&self, tests: &Tests) -> Result<String, RunnerError>;

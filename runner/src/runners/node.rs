@@ -1,6 +1,7 @@
-use config::Tests;
 use serde::{Deserialize, Serialize};
 use std::{path::PathBuf, process::Command, str::FromStr};
+
+use crate::Tests;
 
 use super::runner::{Runner, RunnerError};
 
@@ -21,8 +22,8 @@ impl Runner for Node {
 
         let mut test_functions = Vec::new();
         let mut function_names = Vec::new();
-        for i in 0..tests.tests.len() {
-            let test = &tests.tests[i];
+        for i in 0..tests.len() {
+            let test = &tests[i];
             let hooks = &tests.hooks;
             let function_name = format!("test_{}", i);
             let code = format!(
@@ -105,5 +106,9 @@ await main();
             .expect("Failed to execute command");
 
         Ok(String::from_utf8(output.stdout).unwrap())
+    }
+
+    fn run_str(&self, code: &str) -> Result<String, RunnerError> {
+        Ok("".to_string())
     }
 }

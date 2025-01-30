@@ -1,10 +1,9 @@
 [package]
-authors = ["Shaun Hamilton"]
-edition = "2021"
 name = "config"
 version = "0.1.0"
+edition = "2021"
 
 [dependencies]
-serde = { version = "1.0.202", features = ["derive"] }
-runner = { path = "../runner" }
-config = { path = "../config" }
+serde = { version = "1.0.217", features = ["derive"] }
+serde_json = "1.0.138"
+typeshare = "1.0.4"

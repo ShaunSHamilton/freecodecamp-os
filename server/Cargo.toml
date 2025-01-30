@@ -5,9 +5,13 @@ edition = "2021"
 authors = ["Shaun Hamilton"]
 
 [dependencies]
-axum = { version = "0.7.5", features = ["ws"] }
+axum = { version = "0.8.1", features = ["ws"] }
+include_dir = "0.7.4"
 serde = { version = "1.0.202", features = ["derive"] }
 serde_json = "1.0.117"
 tokio = { version = "1.37.0", features = ["full"] }
+typeshare = "1.0.4"
+# runner = { path = "../runner" }
+uuid = { version = "1.11.0", features = ["serde", "v7"] }
 config = { path = "../config" }
-runner = { path = "../runner" }
+parser = { path = "../parser" }

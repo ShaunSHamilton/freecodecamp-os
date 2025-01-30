@@ -101,3 +101,40 @@ fn test_1() {
   println!("{}", output);
 }
 ```
+
+---
+
+Config is mandatory for using bin. Runner only needs part of config (passed by bin), and parser only needs part of the config (passed by bin).
+
+Config is made of pieces defined by runner and parser (+ more).
+
+Config probably should not be a public library.
+
+---
+
+## Routes
+
+- `GET /`
+
+Landing page with list of projects.
+
+- `GET /<PROJECT>/<LESSON_ID>`
+
+Example: `/0/0`
+
+Gets the Markdown file for the lesson data.
+
+- `POST /config { locale: <LOCAL> }`
+
+- `POST /reset-lesson?project_id=<PROJECT_ID>&lesson_id=<LESSON_ID>`
+- `POST /reset-project?project_id=<PROJECT_ID>`
+
+## Websockets
+
+- `CONNECT`
+- `RUN_TESTS`
+- `UPDATE_TESTS`
+- `UPDATE_CONSOLE`
+- `UPDATE_HINTS`
+- `CANCEL_TESTS`
+- `RESPONSE`

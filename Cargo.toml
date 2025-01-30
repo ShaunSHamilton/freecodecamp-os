@@ -1,4 +1,4 @@
 [workspace]
 members = ["cli", "config", "parser", "runner", "server"]
 resolver = "2"
-exclude = ["app"]
+exclude = ["app", "vite-c"]
