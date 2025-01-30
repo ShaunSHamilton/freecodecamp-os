@@ -13,7 +13,7 @@ fn markdown() {
 }
 
 fn get_markdown() -> String {
-    let s = std::fs::read_to_string("./tests/project-1.md").unwrap();
+    let s = std::fs::read_to_string("../example/curriculum/project-1.md").unwrap();
 
     s
 }

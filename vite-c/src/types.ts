@@ -23,8 +23,28 @@ export interface FreeCodeCampConf {
 	version: string;
 }
 
-export interface Project {
+export interface Lesson {
+	description: string;
 	id: number;
-	dashed_name: string;
+}
+
+export interface ProjectMeta {
+	id: number;
+	is_public: boolean;
+}
+
+export interface Project {
+	description: string;
+	meta: ProjectMeta;
+	title: string;
+}
+
+export interface Seed {
+	seed_code: string;
+}
+
+export interface Test {
+	test_string: string;
+	test_code: string;
 }
 

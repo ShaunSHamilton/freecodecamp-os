@@ -1,16 +1,17 @@
-import { Events, ProjectI } from "../types";
+import { Project } from "../types";
 import { Block } from "./block";
 
 export interface SelectionProps {
-  sock: (type: Events, data: object) => void;
-  projects: ProjectI[];
+  projects: Project[];
 }
-export const Selection = ({ sock, projects }: SelectionProps) => {
+export const Selection = ({ projects }: SelectionProps) => {
   return (
     <ul className="blocks">
-      {projects.map((p, i) => {
-        return <Block key={i} {...{ ...p, sock }} />;
-      })}
+      {projects
+        .sort((a, b) => a.meta.id - b.meta.id)
+        .map((p) => {
+          return <Block key={p.meta.id} {...{ ...p }} />;
+        })}
     </ul>
   );
 };

@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { Landing, landingLoader } from "./templates/landing";
 import { Header } from "./components/header";
+import { ProjectLesson, projectLoader } from "./templates/project";
 
 function RootComponent() {
   return (
@@ -36,7 +37,14 @@ const landingRoute = createRoute({
   loader: landingLoader,
 });
 
-const routeTree = rootRoute.addChildren([landingRoute]);
+const lessonRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/project/$project_id/$lesson_id",
+  component: ProjectLesson,
+  loader: projectLoader,
+});
+
+const routeTree = rootRoute.addChildren([landingRoute, lessonRoute]);
 
 // Set up a Router instance
 export const router = createRouter({

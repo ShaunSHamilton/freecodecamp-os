@@ -1,57 +1,34 @@
 import { Description } from "../components/description";
 import { Heading } from "../components/heading";
-import { ConsoleError, F, LoaderT, ProjectI, TestType } from "../types";
-import { Controls } from "../components/controls";
-import { Output } from "../components/output";
+import { FreeCodeCampConf, Lesson, Project } from "../types";
 import "./project.css";
+import { getRouteApi, useParams } from "@tanstack/react-router";
 
-export interface ProjectProps {
-  cancelTests: F<void, void>;
-  goToNextLesson: F<void, void>;
-  goToPreviousLesson: F<void, void>;
-  resetProject: F<void, void>;
-  runTests: F<void, void>;
-  cons: ConsoleError[];
-  description: string;
-  hints: string[];
-  loader: LoaderT;
-  lessonNumber: number;
-  project: ProjectI;
-  tests: TestType[];
-}
+export const ProjectLesson = () => {
+  const params = useParams({ strict: false });
 
-export const Project = ({
-  cancelTests,
-  runTests,
-  resetProject,
-  goToNextLesson,
-  goToPreviousLesson,
-  loader,
-  project,
-  lessonNumber,
-  description,
-  tests,
-  hints,
-  cons,
-}: ProjectProps) => {
+  const routeApi = getRouteApi(
+    `/project/${params.project_id}/${params.lesson_id}`
+  );
+  const { project, lesson, config } = routeApi.useLoaderData();
   return (
     <>
       <div className="container">
         <Heading
-          {...(project.isIntegrated
-            ? { title: project.title }
-            : {
-                goToNextLesson,
-                goToPreviousLesson,
-                numberOfLessons: project.numberOfLessons,
-                title: project.title,
-                lessonNumber,
-              })}
+          // {...(project.isIntegrated
+          title={project.title}
+          // : {
+          //     goToNextLesson,
+          //     goToPreviousLesson,
+          //     numberOfLessons: project.numberOfLessons,
+          //     title: project.title,
+          //     lessonNumber,
+          //   })}
         />
 
-        <Description description={description} />
+        <Description description={lesson.description} />
 
-        <Controls
+        {/* <Controls
           {...(project.isIntegrated
             ? {
                 cancelTests,
@@ -66,10 +43,24 @@ export const Project = ({
                 tests,
                 loader,
               })}
-        />
+        /> */}
 
-        <Output {...{ hints, tests, cons }} />
+        {/* <Output {...{ hints, tests, cons }} /> */}
       </div>
     </>
   );
+};
+
+export const projectLoader = async ({ params: { project_id, lesson_id } }) => {
+  const project: Project = await (await fetch(`/project/${project_id}`)).json();
+  const config: FreeCodeCampConf = await (await fetch("/config")).json();
+  const lesson: Lesson = await (
+    await fetch(`/project/${project_id}/${lesson_id}`)
+  ).json();
+
+  return {
+    project,
+    config,
+    lesson,
+  };
 };

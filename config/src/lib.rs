@@ -36,8 +36,16 @@ pub enum Locale {
 #[typeshare]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Project {
+    pub description: String,
+    pub meta: ProjectMeta,
+    pub title: String,
+}
+
+#[typeshare]
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ProjectMeta {
     pub id: u16,
-    pub dashed_name: String,
+    pub is_public: bool,
 }
 
 #[typeshare]
@@ -60,14 +68,15 @@ pub struct Test {
     pub test_code: String,
 }
 
-#[typeshare]
-#[derive(Debug, Serialize, Deserialize)]
-pub enum Hook {
-    BeforeAll(String),
-    BeforeEach(String),
-    AfterAll(String),
-    AfterEach(String),
-}
+// #[typeshare]
+// #[derive(Debug, Serialize, Deserialize)
+// #[serde(tag = "_type", content = "content")]]
+// pub enum Hook {
+//     BeforeAll(String),
+//     BeforeEach(String),
+//     AfterAll(String),
+//     AfterEach(String),
+// }
 
 #[typeshare]
 #[derive(Debug, Serialize, Deserialize)]

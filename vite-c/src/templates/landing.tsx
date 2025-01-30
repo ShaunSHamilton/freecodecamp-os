@@ -31,7 +31,7 @@ export const Landing = () => {
       <a className="faq" href={config.client.landing[state.locale].faq_link}>
         {config.client.landing[state.locale].faq_text}
       </a>
-      <Selection {...{ sock, projects }} />
+      <Selection {...{ projects }} />
     </>
   );
 };

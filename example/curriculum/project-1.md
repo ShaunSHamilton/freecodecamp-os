@@ -3,9 +3,8 @@
 ```json
 {
   "id": 0,
-  "dashed_name": "learn-freecodecamp-os",
   "isIntegrated": false,
-  "isPublic": true,
+  "is_public": true,
   "currentLesson": 0,
   "runTestsOnWatch": true,
   "seedEveryLesson": false,
@@ -17,7 +16,7 @@
 }
 ```
 
-In this course, you will learn how to use the @freecodecamp/freecodecamp-os package to develop courses.
+In this course, you will learn how to use the `@freecodecamp/freecodecamp-os` package to develop courses.
 
 ## 0
 

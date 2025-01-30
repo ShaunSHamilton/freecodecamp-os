@@ -9,9 +9,9 @@ use axum::{
 
 use include_dir::{include_dir, Dir};
 
-use config::{FreeCodeCampConf, Project};
+use config::{FreeCodeCampConf, Lesson, Project};
 
-use crate::utils::{read_config, read_projects};
+use crate::utils::{read_config, read_lesson, read_projects};
 
 const INDEX_HTML: &str = include_str!("../../../vite-c/dist/index.html");
 
@@ -46,8 +46,12 @@ pub async fn handle_index() -> Html<&'static str> {
     Html(&INDEX_HTML)
 }
 
-pub async fn handle_project_lesson() {
-    todo!()
+pub async fn handle_project_lesson(
+    Path((project_id, lesson_id)): Path<(u16, u16)>,
+) -> Json<Lesson> {
+    let lesson = read_lesson(project_id, lesson_id);
+
+    Json(lesson)
 }
 
 pub async fn handle_get_config() -> Json<FreeCodeCampConf> {
@@ -70,4 +74,13 @@ pub async fn handle_project_reset() {
 pub async fn handle_get_projects() -> Json<Vec<Project>> {
     let projects = read_projects();
     Json(projects)
+}
+
+pub async fn handle_get_project(Path(project_id): Path<u16>) -> Json<Project> {
+    let projects = read_projects();
+    let project = projects
+        .into_iter()
+        .find(|p| p.meta.id == project_id)
+        .unwrap();
+    Json(project)
 }

@@ -4,7 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-markdown = "1.0.0-alpha.21"
+markdown = { git = "https://github.com/wooorm/markdown-rs.git" }
 config = { path = "../config" }
 serde = "1.0.217"
 serde_json = "1.0.138"
+mdast_util_to_markdown = { git = "https://github.com/wooorm/markdown-rs.git" }

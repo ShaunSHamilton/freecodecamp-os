@@ -1,5 +1,6 @@
-use config::{Lesson, Project};
+use config::{Lesson, Project, ProjectMeta};
 use markdown::mdast::Node;
+use mdast_util_to_markdown::to_markdown;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct ParserError {
@@ -40,13 +41,24 @@ impl MarkdownParser {
 }
 
 trait Utils {
-    fn get_heading(&self, depth: u8, text: &str) -> Option<Vec<&Node>>;
-    fn stringifiy(&self) -> String;
+    fn get_heading(&self, depth: u8, text: &str) -> Option<Vec<Node>> {
+        unimplemented!()
+    }
+    fn stringify(&self) -> String;
 }
 
 impl Utils for Vec<&Node> {
-    fn get_heading(&self, depth: u8, text: &str) -> Option<Vec<&Node>> {
-        let mut heading_nodes: Vec<&Node> = vec![];
+    fn stringify(&self) -> String {
+        self.iter()
+            .map(|node| to_markdown(node).unwrap())
+            .collect::<Vec<String>>()
+            .join("\n")
+    }
+}
+
+impl Utils for Vec<Node> {
+    fn get_heading(&self, depth: u8, text: &str) -> Option<Vec<Node>> {
+        let mut heading_nodes: Vec<Node> = vec![];
         let mut take = false;
         for node in self {
             if let Node::Heading(heading) = node {
@@ -71,13 +83,9 @@ impl Utils for Vec<&Node> {
         Some(heading_nodes)
     }
 
-    fn stringifiy(&self) -> String {
+    fn stringify(&self) -> String {
         self.iter()
-            .map(|node| match node {
-                Node::Text(t) => t.value.clone(),
-                Node::InlineCode(c) => format!("`{}`", c.value),
-                _ => "".to_string(),
-            })
+            .map(|node| to_markdown(node).unwrap())
             .collect::<Vec<String>>()
             .join("\n")
     }
@@ -85,36 +93,73 @@ impl Utils for Vec<&Node> {
 
 impl Parser for MarkdownParser {
     fn get_project_meta(&self) -> Result<Project, ParserError> {
-        let code_node = self.ast.children().unwrap().iter().find(|node| {
-            if let Node::Code(_) = node {
-                true
-            } else {
-                false
-            }
-        });
+        let mut project_meta_nodes = vec![];
+        let mut take = false;
 
-        if let Some(Node::Code(code)) = code_node {
-            if code.lang != Some("json".to_string()) {
-                let position = code.position.as_ref().unwrap();
-                return Err(ParserError {
-                    message: "Project meta not found".to_string(),
-                    location: Location {
-                        start: position.start.line,
-                        end: Some(position.end.line),
-                    },
-                });
+        for node in self.ast.children().unwrap() {
+            match node {
+                Node::Heading(heading) => {
+                    if heading.depth == 1 {
+                        take = true;
+                    } else {
+                        take = false;
+                        break;
+                    }
+                }
+                _ => {}
+            };
+
+            if take {
+                project_meta_nodes.push(node.clone());
             }
-            let project: Project = serde_json::from_str(&code.value).unwrap();
-            Ok(project)
-        } else {
-            Err(ParserError {
-                message: "Project meta not found".to_string(),
-                location: Location {
-                    start: 0,
-                    end: None,
-                },
-            })
         }
+
+        let title = project_meta_nodes
+            .iter()
+            .find(|n| {
+                if let Node::Heading(heading) = n {
+                    if heading.depth == 1 {
+                        return true;
+                    }
+                }
+                false
+            })
+            .unwrap()
+            .to_string();
+
+        let description = project_meta_nodes
+            .iter()
+            .filter(|n| match n {
+                Node::Heading(heading) => {
+                    return heading.depth != 1;
+                }
+                Node::Code(_) => false,
+                _ => {
+                    return true;
+                }
+            })
+            .collect::<Vec<_>>()
+            .stringify();
+
+        let meta = project_meta_nodes
+            .iter()
+            .find(|n| {
+                if let Node::Code(_) = n {
+                    return true;
+                }
+                false
+            })
+            .unwrap()
+            .to_string();
+        let meta = serde_json::from_str(&meta).unwrap();
+
+        let project = Project {
+            description,
+            meta,
+            title,
+        };
+
+        Ok(project)
     }
 
     fn get_lesson(&self, lesson_number: u16) -> Result<Lesson, ParserError> {
@@ -137,19 +182,12 @@ impl Parser for MarkdownParser {
             }
 
             if take {
-                lesson_nodes.push(node);
+                lesson_nodes.push(node.clone());
             }
         }
 
         let description_nodes = lesson_nodes.get_heading(3, "--description--").unwrap();
-        let description = description_nodes
-            .iter()
-            // Skip first node as it is the heading itself
-            .skip(1)
-            .map(|node| node.stringifiy())
-            .collect::<Vec<String>>()
-            .join("\n");
-        println!("{}", description);
+        let description = description_nodes.stringify();
 
         let lesson = Lesson {
             description,
@@ -168,7 +206,6 @@ impl Parser for MarkdownParser {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use markdown::{to_mdast, ParseOptions};
 
     #[test]
     fn test_get_project_meta() {
@@ -178,14 +215,13 @@ mod tests {
 ```json
 {
     "id": 1,
-    "dashed_name": "project-1"
+    "is_public": true
 }
 ```
 "#;
-        let ast = to_mdast(markdown, &ParseOptions::default()).unwrap();
-        let parser = MarkdownParser { ast };
+        let parser = MarkdownParser::new(markdown);
         let project = parser.get_project_meta().unwrap();
-        assert_eq!(project.id, 1);
-        assert_eq!(project.dashed_name, "project-1");
+        assert_eq!(project.meta.id, 1);
+        assert_eq!(project.meta.is_public, true);
     }
 }

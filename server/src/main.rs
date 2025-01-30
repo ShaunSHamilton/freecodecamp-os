@@ -47,9 +47,10 @@ async fn main() {
         .route("/", get(routes::handle_index))
         .route("/assets/{path}", get(routes::handle_assets))
         .route(
-            "/{project_id}/{lesson_id}",
+            "/project/{project_id}/{lesson_id}",
             get(routes::handle_project_lesson),
         )
+        .route("/project/{project_id}", get(routes::handle_get_project))
         .route("/projects", get(routes::handle_get_projects))
         .route("/config", get(routes::handle_get_config))
         .route("/config", post(routes::handle_post_config))
