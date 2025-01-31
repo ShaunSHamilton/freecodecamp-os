@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
-import { F } from '../types';
+import { useEffect, useState } from "react";
+import { F } from "../types";
+import { parseMarkdown } from "../utils";
 
 interface HeadingProps {
   title: string;
@@ -14,48 +15,48 @@ export const Heading = ({
   lessonNumber,
   numberOfLessons,
   goToNextLesson,
-  goToPreviousLesson
+  goToPreviousLesson,
 }: HeadingProps) => {
-  const [anim, setAnim] = useState('');
+  const [anim, setAnim] = useState("");
 
   useEffect(() => {
-    setAnim('fade-in');
-    setTimeout(() => setAnim(''), 1000);
+    setAnim("fade-in");
+    setTimeout(() => setAnim(""), 1000);
   }, [lessonNumber]);
 
-  const lessonNumberExists = typeof lessonNumber !== 'undefined';
+  const lessonNumberExists = typeof lessonNumber !== "undefined";
   const canGoBack = lessonNumberExists && lessonNumber > 0;
   const canGoForward =
     lessonNumberExists && numberOfLessons && lessonNumber < numberOfLessons - 1;
 
-  const h1 = title + (lessonNumberExists ? ' - Lesson ' + lessonNumber : '');
+  const h1 = title + (lessonNumberExists ? " - Lesson " + lessonNumber : "");
   return (
-    <nav className='heading'>
+    <nav className="heading">
       {goToPreviousLesson && (
         <button
-          className='previous-lesson-btn'
+          className="previous-lesson-btn"
           disabled={!canGoBack}
           onClick={() => goToPreviousLesson()}
-          style={{ cursor: canGoBack ? 'pointer' : 'not-allowed' }}
+          style={{ cursor: canGoBack ? "pointer" : "not-allowed" }}
         >
-          {'<'}
+          {"<"}
         </button>
       )}
       <h1
-        id='project-heading'
+        id="project-heading"
         className={anim}
         dangerouslySetInnerHTML={{
-          __html: h1
+          __html: parseMarkdown(h1),
         }}
       ></h1>
       {goToNextLesson && (
         <button
-          className='next-lesson-btn'
+          className="next-lesson-btn"
           disabled={!canGoForward}
           onClick={() => goToNextLesson()}
-          style={{ cursor: canGoForward ? 'pointer' : 'not-allowed' }}
+          style={{ cursor: canGoForward ? "pointer" : "not-allowed" }}
         >
-          {'>'}
+          {">"}
         </button>
       )}
     </nav>

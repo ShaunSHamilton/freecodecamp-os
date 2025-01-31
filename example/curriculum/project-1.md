@@ -5,14 +5,12 @@
   "id": 0,
   "isIntegrated": false,
   "is_public": true,
-  "currentLesson": 0,
   "runTestsOnWatch": true,
   "seedEveryLesson": false,
   "isResetEnabled": true,
   "numberofLessons": null,
   "blockingTests": null,
-  "breakOnFailure": null,
-  "numberOfLessons": 27
+  "breakOnFailure": null
 }
 ```
 

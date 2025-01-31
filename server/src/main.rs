@@ -53,6 +53,8 @@ async fn main() {
         .route("/project/{project_id}", get(routes::handle_get_project))
         .route("/projects", get(routes::handle_get_projects))
         .route("/config", get(routes::handle_get_config))
+        .route("/state", get(routes::handle_get_state))
+        .route("/state", post(routes::handle_post_state))
         .route("/config", post(routes::handle_post_config))
         .route("/reset-lesson", post(routes::handle_lesson_reset))
         .route("/reset-project", post(routes::handle_project_reset));

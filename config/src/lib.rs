@@ -84,3 +84,17 @@ pub struct Seed {
     // pub runner: Runner,
     pub seed_code: String,
 }
+
+#[typeshare]
+#[derive(Debug, Serialize, Deserialize)]
+pub struct State {
+    pub locale: Locale,
+    pub completed_lessons: Vec<CompletedLesson>,
+}
+
+#[typeshare]
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CompletedLesson {
+    pub project_id: u16,
+    pub lesson_id: u16,
+}

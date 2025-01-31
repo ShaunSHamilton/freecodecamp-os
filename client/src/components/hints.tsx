@@ -1,6 +1,8 @@
+import { parseMarkdown } from "../utils";
+
 export const Hints = ({ hints }: { hints: string[] }) => {
   return (
-    <ul style={{ listStyle: 'none' }}>
+    <ul style={{ listStyle: "none" }}>
       {hints.map((hint, i) => (
         <HintElement key={i} {...{ hint, i }} />
       ))}
@@ -16,7 +18,7 @@ const HintElement = ({ hint, i }: { hint: string; i: number }) => {
     <div>
       <details
         dangerouslySetInnerHTML={{
-          __html: details
+          __html: parseMarkdown(details),
         }}
       ></details>
     </div>

@@ -9,13 +9,13 @@ use axum::{
 
 use include_dir::{include_dir, Dir};
 
-use config::{FreeCodeCampConf, Lesson, Project};
+use config::{FreeCodeCampConf, Lesson, Project, State};
 
-use crate::utils::{read_config, read_lesson, read_projects};
+use crate::utils::{read_config, read_lesson, read_projects, read_state};
 
-const INDEX_HTML: &str = include_str!("../../../vite-c/dist/index.html");
+const INDEX_HTML: &str = include_str!("../../../client/dist/index.html");
 
-static DIST_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/../vite-c/dist");
+static DIST_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/../client/dist");
 
 pub async fn handle_assets(Path(path): Path<PathBuf>) -> Response {
     // let manifest = serde_json::from_str::<HashMap<String, Manifest>>(MANIFEST).unwrap();
@@ -57,6 +57,14 @@ pub async fn handle_project_lesson(
 pub async fn handle_get_config() -> Json<FreeCodeCampConf> {
     let config = read_config();
     Json(config)
+}
+pub async fn handle_get_state() -> Json<State> {
+    let state = read_state();
+
+    Json(state)
+}
+pub async fn handle_post_state() -> Json<State> {
+    todo!()
 }
 
 pub async fn handle_post_config() {

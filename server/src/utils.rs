@@ -1,4 +1,4 @@
-use config::{FreeCodeCampConf, Lesson, Project};
+use config::{FreeCodeCampConf, Lesson, Project, State};
 use parser::{MarkdownParser, Parser};
 
 pub fn read_config() -> FreeCodeCampConf {
@@ -7,6 +7,14 @@ pub fn read_config() -> FreeCodeCampConf {
     let config: FreeCodeCampConf = serde_json::from_str(&config_file).unwrap();
 
     config
+}
+
+pub fn read_state() -> State {
+    let state_file = std::fs::read_to_string("./example/state.json").unwrap();
+
+    let state: State = serde_json::from_str(&state_file).unwrap();
+
+    state
 }
 
 /// Reads all the `.md` files in the `curriculum/` directory, parses them using the `MarkdownParser`, and returns a vector of `Project` structs.

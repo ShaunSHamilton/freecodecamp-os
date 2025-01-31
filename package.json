@@ -4,13 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite ./vite-c",
-    "build:client": "tsc -p ./vite-c/tsconfig.json && vite build ./vite-c",
+    "dev": "vite ./client",
+    "build:client": "tsc -p ./client/tsconfig.json && vite build ./client",
     "lint": "eslint .",
     "tsc": "tsc",
-    "preview": "vite preview ./vite-c",
-    "watch": "watchexec -r -w 'vite-c' -i 'vite-c/dist' -w 'server' -- 'npm run build:client && cargo run -p freecodecamp-os'",
-    "type": "typeshare ./config --lang=typescript --output-file='./vite-c/src/types.ts'"
+    "preview": "vite preview ./client",
+    "watch": "watchexec -r -w 'client' -i 'client/dist' -w 'server' -- 'npm run build:client && cargo run -p freecodecamp-os'",
+    "type": "typeshare ./config --lang=typescript --output-file='./client/src/types.ts'"
   },
   "dependencies": {
     "@tanstack/react-query": "5.65.1",

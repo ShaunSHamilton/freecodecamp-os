@@ -1,45 +1,38 @@
-import { SelectionProps } from "./selection";
-import { ProjectI, Events } from "../types/index";
-import { Tag } from "./tag";
-import { Checkmark } from "./checkmark";
+import { F, parseMarkdown } from "../utils";
+// import { Checkmark } from "./checkmark";
+import { Project } from "../types";
+// import { Tag } from "./tag";
 
-type BlockProps = {
-  sock: SelectionProps["sock"];
-} & ProjectI;
+type BlockProps = Project & { set_project_id: F<number, void> };
 
 export const Block = ({
-  id,
-  title,
+  meta: { id, is_public },
   description,
-  isIntegrated,
-  isPublic,
-  numberOfLessons,
-  currentLesson,
-  completedDate,
-  tags,
-  sock,
-}: BlockProps) => {
-  function selectProject() {
-    sock(Events.SELECT_PROJECT, id);
-  }
-
-  let lessonsCompleted = 0;
-  if (completedDate) {
-    lessonsCompleted = numberOfLessons;
-  } else {
-    lessonsCompleted =
-      !isIntegrated && currentLesson === numberOfLessons - 1
-        ? currentLesson + 1
-        : currentLesson;
-  }
+  title,
+  set_project_id,
+}: // isIntegrated,
+// numberOfLessons,
+// currentLesson,
+// completedDate,
+// tags,
+BlockProps) => {
+  // let lessonsCompleted = 0;
+  // if (completedDate) {
+  //   lessonsCompleted = numberOfLessons;
+  // } else {
+  //   lessonsCompleted =
+  //     !isIntegrated && currentLesson === numberOfLessons - 1
+  //       ? currentLesson + 1
+  //       : currentLesson;
+  // }
   return (
     <li className="block">
       <button
         className="block-btn"
-        onClick={selectProject}
-        disabled={!isPublic}
+        onClick={() => set_project_id(id)}
+        disabled={!is_public}
         style={
-          !isPublic
+          !is_public
             ? {
                 cursor: "not-allowed",
               }
@@ -47,30 +40,30 @@ export const Block = ({
         }
       >
         <div className={"tags-row"}>
-          {tags.map((text) => {
+          {/* {tags.map((text) => {
             return <Tag text={text} />;
-          })}
+          })} */}
         </div>
 
         <h2>
           {title}
-          {completedDate ? (
+          {/* {completedDate ? (
             <span className="block-checkmark">
               <Checkmark />
             </span>
-          ) : null}
+          ) : null} */}
         </h2>
         <div className="block-info">
           <p
             dangerouslySetInnerHTML={{
-              __html: description,
+              __html: parseMarkdown(description),
             }}
           ></p>
           <span aria-hidden="true">
-            {lessonsCompleted}/{numberOfLessons}
+            {/* {lessonsCompleted}/{numberOfLessons} */}
           </span>
           <span className="sr-only">
-            {lessonsCompleted} of {numberOfLessons} lessons completed
+            {/* {lessonsCompleted} of {numberOfLessons} lessons completed */}
           </span>
         </div>
       </button>

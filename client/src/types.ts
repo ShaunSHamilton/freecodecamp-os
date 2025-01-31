@@ -18,6 +18,11 @@ export interface Client {
 	landing: Record<Locale, Landing>;
 }
 
+export interface CompletedLesson {
+	project_id: number;
+	lesson_id: number;
+}
+
 export interface FreeCodeCampConf {
 	client: Client;
 	version: string;
@@ -41,6 +46,11 @@ export interface Project {
 
 export interface Seed {
 	seed_code: string;
+}
+
+export interface State {
+	locale: Locale;
+	completed_lessons: CompletedLesson[];
 }
 
 export interface Test {

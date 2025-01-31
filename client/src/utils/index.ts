@@ -14,9 +14,9 @@ marked.use(
   })
 );
 
-// function parseMarkdown(markdown: string) {
-//   return marked.parse(markdown, { gfm: true });
-// }
+export function parseMarkdown(markdown: string) {
+  return marked.parse(markdown, { gfm: true });
+}
 
 export function parse(objOrString: unknown) {
   if (typeof objOrString === "string") {
@@ -25,3 +25,5 @@ export function parse(objOrString: unknown) {
     return JSON.stringify(objOrString);
   }
 }
+
+export type F<A, R> = (arg: A) => R;

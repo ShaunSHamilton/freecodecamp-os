@@ -1,4 +1,4 @@
-use config::{Lesson, Project, ProjectMeta};
+use config::{Lesson, Project};
 use markdown::mdast::Node;
 use mdast_util_to_markdown::to_markdown;
 
@@ -41,7 +41,7 @@ impl MarkdownParser {
 }
 
 trait Utils {
-    fn get_heading(&self, depth: u8, text: &str) -> Option<Vec<Node>> {
+    fn get_heading(&self, _depth: u8, _text: &str) -> Option<Vec<Node>> {
         unimplemented!()
     }
     fn stringify(&self) -> String;
@@ -80,7 +80,7 @@ impl Utils for Vec<Node> {
             }
         }
 
-        Some(heading_nodes)
+        Some(heading_nodes.iter().skip(1).cloned().collect())
     }
 
     fn stringify(&self) -> String {
@@ -102,7 +102,6 @@ impl Parser for MarkdownParser {
                     if heading.depth == 1 {
                         take = true;
                     } else {
-                        take = false;
                         break;
                     }
                 }

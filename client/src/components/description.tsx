@@ -1,3 +1,5 @@
+import { parseMarkdown } from "../utils";
+
 interface DescriptionProps {
   description: string;
 }
@@ -5,8 +7,8 @@ interface DescriptionProps {
 export const Description = ({ description }: DescriptionProps) => {
   return (
     <section
-      id='description'
-      dangerouslySetInnerHTML={{ __html: description }}
+      id="description"
+      dangerouslySetInnerHTML={{ __html: parseMarkdown(description) }}
     ></section>
   );
 };
