@@ -1,14 +1,4 @@
-import { useEffect, useState } from 'react';
-import { F, LoaderT, ProjectI, TestType } from '../types';
-
-interface ControlsProps {
-  cancelTests: F<void, void>;
-  runTests: F<void, void>;
-  resetProject?: F<void, void>;
-  isResetEnabled?: ProjectI['isResetEnabled'];
-  tests: TestType[];
-  loader?: LoaderT;
-}
+import { useEffect, useState } from "react";
 
 // Changes the Reset button background to a filling progress bar when the seed is running
 function progressStyle(loader?: LoaderT) {
@@ -18,29 +8,22 @@ function progressStyle(loader?: LoaderT) {
 
   const {
     isLoading,
-    progress: { total, count }
+    progress: { total, count },
   } = loader;
   if (isLoading) {
     return {
       background: `linear-gradient(to right, #0065A9 ${
         (count / total) * 100
-      }%, rgba(0,0,0,0) 0%)`
+      }%, rgba(0,0,0,0) 0%)`,
     };
   }
 }
 
-export const Controls = ({
-  cancelTests,
-  runTests,
-  resetProject,
-  isResetEnabled,
-  tests,
-  loader
-}: ControlsProps) => {
+export const Controls = () => {
   const [isTestsRunning, setIsTestsRunning] = useState(false);
 
   useEffect(() => {
-    if (tests.some(t => t.isLoading)) {
+    if (tests.some((t) => t.isLoading)) {
       setIsTestsRunning(true);
     } else {
       setIsTestsRunning(false);
@@ -58,16 +41,16 @@ export const Controls = ({
   const resetDisabled = !isResetEnabled || loader?.isLoading;
 
   return (
-    <section className='project-controls'>
-      <button className='secondary-cta' onClick={handleTests}>
-        {isTestsRunning ? 'Cancel Tests' : 'Run Tests'}
+    <section className="project-controls">
+      <button className="secondary-cta" onClick={handleTests}>
+        {isTestsRunning ? "Cancel Tests" : "Run Tests"}
       </button>
       {resetProject && (
         <button
           disabled={resetDisabled}
           style={{
             ...progressStyle(loader),
-            cursor: resetDisabled ? 'not-allowed' : 'pointer'
+            cursor: resetDisabled ? "not-allowed" : "pointer",
           }}
           onClick={() => resetProject()}
         >

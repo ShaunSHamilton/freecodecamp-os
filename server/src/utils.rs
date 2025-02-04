@@ -17,6 +17,11 @@ pub fn read_state() -> State {
     state
 }
 
+pub fn set_state(new_state: State) {
+    let state_str = serde_json::to_string(&new_state).unwrap();
+    std::fs::write("./example/state.json", state_str).unwrap();
+}
+
 /// Reads all the `.md` files in the `curriculum/` directory, parses them using the `MarkdownParser`, and returns a vector of `Project` structs.
 pub fn read_projects() -> Vec<Project> {
     let curriculum_dir = std::fs::read_dir("./example/curriculum").unwrap();

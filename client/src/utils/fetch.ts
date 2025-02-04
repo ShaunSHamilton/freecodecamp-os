@@ -5,7 +5,7 @@ interface GetProjectArgs {
 }
 
 export async function getProject({ project_id }: GetProjectArgs) {
-  const res = await fetch(`/project/${project_id}`);
+  const res = await fetch(`/projects/${project_id}`);
   const project: Project = await res.json();
 
   return project;
@@ -31,7 +31,7 @@ interface GetLessonArgs {
 }
 
 export async function getLesson({ project_id, lesson_id }: GetLessonArgs) {
-  const res = await fetch(`/project/${project_id}/${lesson_id}`);
+  const res = await fetch(`/projects/${project_id}/lessons/${lesson_id}`);
   const lesson: Lesson = await res.json();
 
   return lesson;

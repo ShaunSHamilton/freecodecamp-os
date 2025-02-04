@@ -6,7 +6,7 @@ fn markdown() {
     let markdown = MarkdownParser::new(&s);
 
     let project_meta = markdown.get_project_meta().unwrap();
-    let lesson = markdown.get_lesson(0).unwrap();
+    let lesson = markdown.get_lesson(2).unwrap();
 
     println!("{:?}", project_meta);
     println!("{:?}", lesson);

@@ -1,3 +1,4 @@
+#![allow(unused_variables)]
 use std::{path::PathBuf, str::FromStr};
 
 use axum::{
@@ -9,9 +10,9 @@ use axum::{
 
 use include_dir::{include_dir, Dir};
 
-use config::{FreeCodeCampConf, Lesson, Project, State};
+use config::{FreeCodeCampConf, Lesson, LessonMarker, Project, State};
 
-use crate::utils::{read_config, read_lesson, read_projects, read_state};
+use crate::utils::{read_config, read_lesson, read_projects, read_state, set_state};
 
 const INDEX_HTML: &str = include_str!("../../../client/dist/index.html");
 
@@ -58,24 +59,22 @@ pub async fn handle_get_config() -> Json<FreeCodeCampConf> {
     let config = read_config();
     Json(config)
 }
+
 pub async fn handle_get_state() -> Json<State> {
     let state = read_state();
 
     Json(state)
 }
-pub async fn handle_post_state() -> Json<State> {
+
+pub async fn handle_post_state(Json(state): Json<State>) {
+    set_state(state);
+}
+
+pub async fn handle_lesson_reset(Path((project_id, lesson_id)): Path<(u16, u16)>) {
     todo!()
 }
 
-pub async fn handle_post_config() {
-    todo!()
-}
-
-pub async fn handle_lesson_reset() {
-    todo!()
-}
-
-pub async fn handle_project_reset() {
+pub async fn handle_project_reset(Path(project_id): Path<u16>) {
     todo!()
 }
 
@@ -91,4 +90,18 @@ pub async fn handle_get_project(Path(project_id): Path<u16>) -> Json<Project> {
         .find(|p| p.meta.id == project_id)
         .unwrap();
     Json(project)
+}
+
+/// Handles the running of tests.
+pub async fn handle_run_tests(Json(_meta): Json<LessonMarker>) {
+    todo!();
+}
+
+/// Handles a lesson submission.
+pub async fn handle_post_project(Path((project_id, lesson_id)): Path<(u16, u16)>) {
+    todo!();
+}
+
+pub async fn handle_cancel_tests() {
+    todo!();
 }

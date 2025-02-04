@@ -1,4 +1,4 @@
 [workspace]
-members = ["cli", "config", "parser", "server"]
+members = ["cli", "config", "parser", "server", "runner"]
 resolver = "2"
-exclude = ["client", "runner"]
+exclude = ["client"]

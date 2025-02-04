@@ -2,8 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 
 import { Description } from "../components/description";
 import { Heading } from "../components/heading";
-import { getLesson } from "../utils/fetch";
+import { getLesson, getProject } from "../utils/fetch";
 import "./project.css";
+import { Controls } from "../components/controls";
 
 interface ProjectLessonProps {
   project_id: number;
@@ -16,7 +17,11 @@ export const ProjectLesson = ({
 }: ProjectLessonProps) => {
   const { isPending, isError, data, error } = useQuery({
     queryKey: ["project", project_id, lesson_id],
-    queryFn: async () => getLesson({ project_id, lesson_id }),
+    queryFn: async () => {
+      const lesson = await getLesson({ project_id, lesson_id });
+      const project = await getProject({ project_id });
+      return { lesson, project };
+    },
   });
 
   if (isPending) {
@@ -32,8 +37,7 @@ export const ProjectLesson = ({
       <div className="container">
         <Heading
           // {...(project.isIntegrated
-          title="TODO"
-          // title={data.title}
+          title={data.project.title}
           // : {
           //     goToNextLesson,
           //     goToPreviousLesson,
@@ -43,24 +47,24 @@ export const ProjectLesson = ({
           //   })}
         />
 
-        <Description description={data.description} />
+        <Description description={data.lesson.description} />
 
-        {/* <Controls
-          {...(project.isIntegrated
-            ? {
-                cancelTests,
-                runTests,
-                tests,
-              }
-            : {
-                cancelTests,
-                runTests,
-                resetProject,
-                isResetEnabled: project.isResetEnabled,
-                tests,
-                loader,
-              })}
-        /> */}
+        <Controls
+        // {...(project.isIntegrated
+        //   ? {
+        //       cancelTests,
+        //       runTests,
+        //       tests,
+        //     }
+        //   : {
+        //       cancelTests,
+        //       runTests,
+        //       resetProject,
+        //       isResetEnabled: project.isResetEnabled,
+        //       tests,
+        //       loader,
+        //     })}
+        />
 
         {/* <Output {...{ hints, tests, cons }} /> */}
       </div>

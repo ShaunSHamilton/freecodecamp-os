@@ -31,13 +31,37 @@ Start docs server:
 
 ## Runner
 
-Test runners for different languages. Supported languages:
+Each test is given a runner name following:
 
-- [ ] Nodejs
-- [ ] Python
-- [ ] Bash
-- [ ] Rust
-  - Code is wrapped in `fn <zero_collision_name>() { <code> }`
+````markdown
+```<code_lang>,runner=<runner_name>
+<test>
+```
+
+```<code_lang>
+<test>
+```
+````
+
+Where, if no runner name is specified, the Markdown codeblock language is used as the runner name.
+
+A Runner is no more than a command that is passed a JSON-serializable string of the test meta - hooks, helpers, test code.
+
+The runner name is mapped in the `freecodecamp.conf.json`:
+
+```json
+{
+  "runners": {
+    "rust": "runner rust",
+    "js": "node --eval",
+    "python": "runner python"
+  }
+}
+```
+
+Whether or not the runner is run in parallel or not is determined by the project configuration.
+
+By default, if no matching `runners` key is found for a runner name, the included `runner` binary is tried. If the test runner is not available in the `runner` binary, the test is skipped, and a warning is logged.
 
 ### Considerations
 

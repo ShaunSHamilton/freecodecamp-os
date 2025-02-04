@@ -3,40 +3,6 @@ use axum::{
     Router,
 };
 
-// use websocket::events::Event;
-
-// mod websocket;
-// mod ws;
-
-// async fn handle_ws_connection(ws: WebSocketUpgrade) -> Response {
-//     ws.on_upgrade(handle_socket)
-// }
-
-// async fn handle_socket(mut socket: WebSocket) {
-//     while let Some(msg) = socket.recv().await {
-//         let msg = if let Ok(msg) = msg {
-//             match msg {
-//                 Message::Text(text) => {
-//                     let event: Event = match serde_json::from_str(&text) {
-//                         Ok(event) => event,
-//                         Err(_) => continue,
-//                     };
-//                     println!("{:?}", event);
-//                 }
-//                 _ => continue,
-//             }
-//         } else {
-//             // client disconnected
-//             return;
-//         };
-
-//         if socket.send(msg).await.is_err() {
-//             // client disconnected
-//             return;
-//         }
-//     }
-// }
-
 mod routes;
 mod utils;
 
@@ -47,17 +13,25 @@ async fn main() {
         .route("/", get(routes::handle_index))
         .route("/assets/{path}", get(routes::handle_assets))
         .route(
-            "/project/{project_id}/{lesson_id}",
+            "/projects/{project_id}/lessons/{lesson_id}",
             get(routes::handle_project_lesson),
         )
-        .route("/project/{project_id}", get(routes::handle_get_project))
+        .route("/projects/{project_id}", get(routes::handle_get_project))
         .route("/projects", get(routes::handle_get_projects))
         .route("/config", get(routes::handle_get_config))
         .route("/state", get(routes::handle_get_state))
         .route("/state", post(routes::handle_post_state))
-        .route("/config", post(routes::handle_post_config))
-        .route("/reset-lesson", post(routes::handle_lesson_reset))
-        .route("/reset-project", post(routes::handle_project_reset));
+        .route(
+            "/projects/{project_id}/lessons/{lesson_id}/reset",
+            post(routes::handle_lesson_reset),
+        )
+        .route("/projects/{project_id}", post(routes::handle_project_reset))
+        .route(
+            "/project/{project_id}/{lesson_id}",
+            post(routes::handle_post_project),
+        )
+        .route("/tests/run", post(routes::handle_run_tests))
+        .route("/tests/cancel", post(routes::handle_cancel_tests));
 
     // run our app with hyper, listening globally on port 3000
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
