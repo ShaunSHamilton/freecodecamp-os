@@ -1,5 +1,5 @@
 use config::{FreeCodeCampConf, Lesson, Project, State};
-use parser::{MarkdownParser, Parser};
+use parser::parse_project;
 
 pub fn read_config() -> FreeCodeCampConf {
     let config_file = std::fs::read_to_string("./example/freecodecamp.conf.json").unwrap();
@@ -33,10 +33,7 @@ pub fn read_projects() -> Vec<Project> {
 
         if path.is_file() {
             let file = std::fs::read_to_string(&path).unwrap();
-            let markdown = MarkdownParser::new(&file);
-
-            let project = markdown.get_project_meta().unwrap();
-            println!("{:?}", project);
+            let project = parse_project(&file).unwrap();
             projects.push(project);
         }
     }
@@ -44,27 +41,31 @@ pub fn read_projects() -> Vec<Project> {
     projects
 }
 
-pub fn read_lesson(project_id: u16, lesson_id: u16) -> Lesson {
+pub fn read_lesson(project_id: usize, lesson_id: usize) -> Lesson {
     let curriculum_dir = std::fs::read_dir("./example/curriculum").unwrap();
 
-    let project_str = curriculum_dir.into_iter().find_map(|entry| {
+    let project = curriculum_dir.into_iter().find_map(|entry| {
         let entry = entry.unwrap();
         let path = entry.path();
 
         if path.is_file() {
             let file = std::fs::read_to_string(&path).unwrap();
-            let markdown = MarkdownParser::new(&file);
 
-            let project = markdown.get_project_meta().unwrap();
+            let project = parse_project(&file).unwrap();
 
             if project.meta.id == project_id {
-                return Some(markdown);
+                return Some(project);
             }
         }
         None
     });
 
-    let lesson = project_str.unwrap().get_lesson(lesson_id).unwrap();
+    let lesson = project
+        .unwrap()
+        .lessons
+        .into_iter()
+        .find(|l| l.meta.id == lesson_id)
+        .unwrap();
 
     lesson
 }

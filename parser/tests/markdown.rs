@@ -1,15 +1,12 @@
-use parser::{MarkdownParser, Parser};
+use parser::parse_project;
 
 #[test]
 fn markdown() {
     let s = get_markdown();
-    let markdown = MarkdownParser::new(&s);
 
-    let project_meta = markdown.get_project_meta().unwrap();
-    let lesson = markdown.get_lesson(2).unwrap();
+    let project = parse_project(&s).unwrap();
 
-    println!("{:?}", project_meta);
-    println!("{:?}", lesson);
+    println!("{:?}", project);
 }
 
 fn get_markdown() -> String {

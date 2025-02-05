@@ -1,4 +1,4 @@
-use std::{collections::HashMap, path::PathBuf, str::FromStr};
+use std::{collections::HashMap, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
 use typeshare::typeshare;
@@ -34,77 +34,60 @@ pub enum Locale {
 }
 
 #[typeshare]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Project {
-    pub description: String,
     pub meta: ProjectMeta,
-    pub title: String,
+    pub lessons: Vec<Lesson>,
 }
 
 #[typeshare]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ProjectMeta {
-    pub id: u16,
+    pub title: String,
+    pub description: String,
+    pub id: usize,
     pub is_public: bool,
 }
 
 #[typeshare]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Lesson {
-    pub description: String,
-    pub code_meta: CodeMeta,
-    pub id: u16,
-    // pub meta: HashMap<String, String>,
-    // pub title: String,
+    pub meta: LessonMeta,
+    pub tests: Vec<Test>,
+    pub seeds: Vec<Seed>,
+    pub hooks: Hook,
 }
 
 #[typeshare]
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LessonMeta {
+    pub description: String,
+    pub id: usize,
+}
+
+#[typeshare]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Test {
-    pub runner: Runner,
+    pub runner: String,
     pub text: String,
     pub code: String,
-    pub state: TestState,
-    pub id: u16,
+    pub id: usize,
 }
 
 #[typeshare]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum Runner {
-    Node,
-    Rust,
-    Python,
-    Bash,
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Seed {
+    Command { runner: String, code: String },
+    File { path: PathBuf, content: String },
 }
 
-impl FromStr for Runner {
-    type Err = ();
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let run = s.split("runner=").collect::<Vec<&str>>()[1];
-
-        match run {
-            "node" => Ok(Runner::Node),
-            "rust" => Ok(Runner::Rust),
-            "python" => Ok(Runner::Python),
-            "bash" => Ok(Runner::Bash),
-            _ => Err(()),
-        }
-    }
-}
-
-impl From<String> for Runner {
-    fn from(s: String) -> Self {
-        let s = s.split("runner=").collect::<Vec<&str>>();
-        let run = s.get(1).unwrap_or(&"node");
-        match *run {
-            "node" => Runner::Node,
-            "rust" => Runner::Rust,
-            "python" => Runner::Python,
-            "bash" => Runner::Bash,
-            _ => panic!("Invalid runner"),
-        }
-    }
+#[typeshare]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Hook {
+    pub before_all: Vec<Seed>,
+    pub before_each: Vec<Seed>,
+    pub after_all: Vec<Seed>,
+    pub after_each: Vec<Seed>,
 }
 
 #[typeshare]
@@ -118,38 +101,6 @@ pub enum TestState {
     Failed(String),
     /// Test is running
     Running,
-}
-
-// #[typeshare]
-#[derive(Debug, Serialize, Deserialize, Clone)]
-// #[serde(tag = "_type", content = "content")]]
-pub enum Hook {
-    BeforeAll(Test),
-    BeforeEach(Test),
-    AfterAll(Test),
-    AfterEach(Test),
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct CodeMeta {
-    pub hooks: Vec<Hook>,
-    pub tests: Vec<Test>,
-    pub seed: Vec<Seed>,
-}
-
-#[typeshare]
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Seed {
-    pub seed_code: String,
-    pub id: u16,
-    pub kind: SeedKind,
-}
-
-#[typeshare]
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub enum SeedKind {
-    Code(PathBuf),
-    Command,
 }
 
 #[typeshare]

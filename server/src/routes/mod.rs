@@ -48,7 +48,7 @@ pub async fn handle_index() -> Html<&'static str> {
 }
 
 pub async fn handle_project_lesson(
-    Path((project_id, lesson_id)): Path<(u16, u16)>,
+    Path((project_id, lesson_id)): Path<(usize, usize)>,
 ) -> Json<Lesson> {
     let lesson = read_lesson(project_id, lesson_id);
 
@@ -70,11 +70,11 @@ pub async fn handle_post_state(Json(state): Json<State>) {
     set_state(state);
 }
 
-pub async fn handle_lesson_reset(Path((project_id, lesson_id)): Path<(u16, u16)>) {
+pub async fn handle_lesson_reset(Path((project_id, lesson_id)): Path<(usize, usize)>) {
     todo!()
 }
 
-pub async fn handle_project_reset(Path(project_id): Path<u16>) {
+pub async fn handle_project_reset(Path(project_id): Path<usize>) {
     todo!()
 }
 
@@ -83,7 +83,7 @@ pub async fn handle_get_projects() -> Json<Vec<Project>> {
     Json(projects)
 }
 
-pub async fn handle_get_project(Path(project_id): Path<u16>) -> Json<Project> {
+pub async fn handle_get_project(Path(project_id): Path<usize>) -> Json<Project> {
     let projects = read_projects();
     let project = projects
         .into_iter()
@@ -98,7 +98,7 @@ pub async fn handle_run_tests(Json(_meta): Json<LessonMarker>) {
 }
 
 /// Handles a lesson submission.
-pub async fn handle_post_project(Path((project_id, lesson_id)): Path<(u16, u16)>) {
+pub async fn handle_post_project(Path((project_id, lesson_id)): Path<(usize, usize)>) {
     todo!();
 }
 
