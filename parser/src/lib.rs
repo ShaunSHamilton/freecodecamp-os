@@ -29,7 +29,8 @@ impl<T> Context<T> for Option<T> {
 pub fn parse_project(markdown_str: &str) -> Result<Project, ParseError> {
     let options = ParseOptions::gfm();
     let node = to_mdast(markdown_str, &options).unwrap();
+    let node = node.children().unwrap().to_owned();
     // Serialize the nodes to a Project
-    let project = Project::from_mdast(&node)?;
+    let project = Project::from_mdast(node)?;
     Ok(project)
 }

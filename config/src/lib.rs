@@ -36,33 +36,32 @@ pub enum Locale {
 #[typeshare]
 #[derive(Debug, Clone, Serialize)]
 pub struct Project {
-    pub meta: ProjectMeta,
+    pub title: String,
+    pub description: String,
+    pub id: usize,
+    pub is_public: bool,
     pub lessons: Vec<Lesson>,
 }
 
 #[typeshare]
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ProjectMeta {
-    pub title: String,
-    pub description: String,
-    pub id: usize,
-    pub is_public: bool,
-}
-
-#[typeshare]
-#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Lesson {
-    pub meta: LessonMeta,
-    pub tests: Vec<Test>,
+    pub after_all: Vec<Seed>,
+    pub after_each: Vec<Seed>,
+    pub before_all: Vec<Seed>,
+    pub before_each: Vec<Seed>,
+    pub hints: Vec<Hint>,
+    pub description: String,
+    pub id: usize,
     pub seeds: Vec<Seed>,
-    pub hooks: Hook,
+    pub tests: Vec<Test>,
 }
 
 #[typeshare]
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct LessonMeta {
-    pub description: String,
+pub struct Hint {
     pub id: usize,
+    pub text: String,
 }
 
 #[typeshare]
@@ -79,15 +78,6 @@ pub struct Test {
 pub enum Seed {
     Command { runner: String, code: String },
     File { path: PathBuf, content: String },
-}
-
-#[typeshare]
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Hook {
-    pub before_all: Vec<Seed>,
-    pub before_each: Vec<Seed>,
-    pub after_all: Vec<Seed>,
-    pub after_each: Vec<Seed>,
 }
 
 #[typeshare]

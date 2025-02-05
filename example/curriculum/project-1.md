@@ -95,6 +95,8 @@ assert.fail("Click the > button to go to the next lesson");
 
 ### --before-each--
 
+#### --cmd--
+
 ```js
 const __a = 1;
 ```
@@ -299,6 +301,8 @@ assert.equal(__projects[0].id, 0);
 ```
 
 ### --before-each--
+
+#### --cmd--
 
 ```js
 const { readFile } = await import("fs/promises");
@@ -639,6 +643,8 @@ assert.isString(__conf.curriculum.locales["<LOCALE_DIR>"]);
 
 ### --before-each--
 
+#### --cmd--
+
 ```js
 const { readFile } = await import("fs/promises");
 const conf = await readFile(
@@ -907,6 +913,8 @@ assert.isTrue(__projects[0].runTestsOnWatch);
 
 ### --before-each--
 
+#### --cmd--
+
 ```js
 const { readFile } = await import("fs/promises");
 const file = await readFile(
@@ -955,5 +963,3 @@ When you are done, type `done` in the terminal.
 const lastCommand = await __helpers.getLastCommand();
 assert.include(lastCommand, "done");
 ```
-
-## --fcc-end--
