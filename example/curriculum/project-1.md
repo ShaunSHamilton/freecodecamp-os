@@ -53,7 +53,7 @@ Click the `Run Tests` button again. Then, click the `Console` tab in the bottom 
 
 This is a test that will always fail.
 
-```js
+```js,runner=node
 await new Promise((resolve) => setTimeout(resolve, 5000));
 assert.fail(
   "This is a custom test assertion message. Click the > button to go to the next lesson"
@@ -74,7 +74,7 @@ Finally, check the `Console` tab for further instructions.
 
 You should edit the `Welcome to freeCodeCampOS!` sentence in the `curriculum/locales/english/learn-freecodecamp-os.md` file to anything you want.
 
-```js
+```js,runner=node
 const { readFile } = await import("fs/promises");
 const file = await readFile(
   "curriculum/locales/english/learn-freecodecamp-os.md",
@@ -86,7 +86,7 @@ assert.notInclude(file.slice(0, 100), "Welcome to freeCodeCampOS!");
 
 I always fail 🙃
 
-```js
+```js,runner=node
 await new Promise((resolve) => setTimeout(resolve, 3000));
 console.log("Look! Worker stdout is printed in debug mode: ", __a);
 assert(__a == 1);
@@ -97,7 +97,7 @@ assert.fail("Click the > button to go to the next lesson");
 
 #### --cmd--
 
-```js
+```js,runner=node
 const __a = 1;
 ```
 
@@ -113,7 +113,7 @@ Fret not! Press the `Reset Project` button to run the <dfn title="starting state
 
 The `curriculum/locales/english/learn-freecodecamp-os.md` file should contain the sentence `Welcome to freeCodeCampOS!`.
 
-```js
+```js,runner=node
 const { readFile } = await import("fs/promises");
 const file = await readFile(
   join(ROOT, "curriculum/locales/english/learn-freecodecamp-os.md"),
@@ -126,7 +126,7 @@ assert.include(file.slice(0, 100), "Welcome to freeCodeCampOS!");
 
 #### --cmd--
 
-```bash
+```bash,runner=bash
 git restore curriculum/locales/english/learn-freecodecamp-os.md
 ```
 
@@ -142,7 +142,7 @@ Open a new terminal, and cd into the `learn-freecodecamp-os/` directory.
 
 You should be in the `learn-freecodecamp-os/` directory.
 
-```js
+```js,runner=node
 const cwd = await __helpers.getCWD();
 assert.include(cwd, "learn-freecodecamp-os");
 ```
@@ -153,7 +153,7 @@ assert.include(cwd, "learn-freecodecamp-os");
 
 Declare the `learn-freecodecamp-os/` directory as an npm project:
 
-```bash
+```bash,runner=bash
 npm init -y
 ```
 
@@ -161,7 +161,7 @@ npm init -y
 
 You should have a `package.json` file in `learn-freecodecamp-os/`.
 
-```js
+```js,runner=node
 const { access, constants } = await import("fs/promises");
 try {
   await access(join(project.dashedName, "package.json"));
@@ -180,7 +180,7 @@ Install `@freecodecamp/freecodecamp-os`.
 
 You should have `@freecodecamp/freecodecamp-os` installed.
 
-```js
+```js,runner=node
 const { access, constants } = await import("fs/promises");
 try {
   await access(
@@ -193,7 +193,7 @@ try {
 
 Version `>=3` should be installed.
 
-```js
+```js,runner=node
 try {
   const { stdout, stderr } = await __helpers.getCommandOutput(
     "npm list",
@@ -207,7 +207,7 @@ try {
 
 ### --hints--
 
-#### 0
+#### --0--
 
 Run `npm install @freecodecamp/freecodecamp-os` in the terminal
 
@@ -221,7 +221,7 @@ Create a `config/` directory to hold your project and state config.
 
 You should have a `config/` directory.
 
-```js
+```js,runner=node
 const { access, constants } = await import("fs/promises");
 try {
   await access(join(project.dashedName, "config"));
@@ -240,7 +240,7 @@ Create a `config/projects.json` file. Initialize it with `[]`.
 
 You should have a `config/projects.json` file.
 
-```js
+```js,runner=node
 const { access, constants } = await import("fs/promises");
 try {
   await access(join(project.dashedName, "config/projects.json"));
@@ -251,7 +251,7 @@ try {
 
 The `projects.json` file should contain `[]`.
 
-```js
+```js,runner=node
 const { readFile } = await import("fs/promises");
 const file = await readFile(
   join(project.dashedName, "config/projects.json"),
@@ -282,7 +282,7 @@ Add the following to the `projects.json` file:
 
 Your `projects.json` file should contain an array with one object.
 
-```js
+```js,runner=node
 assert.isArray(__projects);
 assert.lengthOf(__projects, 1);
 assert.isObject(__projects[0]);
@@ -290,13 +290,13 @@ assert.isObject(__projects[0]);
 
 The object should have the `id` and `dashedName` properties.
 
-```js
+```js,runner=node
 assert.hasAllKeys(__projects[0], ["id", "dashedName"]);
 ```
 
 The `id` property should be `0`.
 
-```js
+```js,runner=node
 assert.equal(__projects[0].id, 0);
 ```
 
@@ -304,7 +304,7 @@ assert.equal(__projects[0].id, 0);
 
 #### --cmd--
 
-```js
+```js,runner=node
 const { readFile } = await import("fs/promises");
 const file = await readFile(
   join(ROOT, project.dashedName, "config/projects.json"),
@@ -325,7 +325,7 @@ Create a directory within `learn-freecodecamp-os/` that matches the `dashedName`
 
 You should have a `learn-freecodecamp-os/learn-freecodecamp-os/` directory.
 
-```js
+```js,runner=node
 const { access, constants } = await import("fs/promises");
 await access(join(project.dashedName, "learn-freecodecamp-os"));
 ```
@@ -348,7 +348,7 @@ For now, `english` is a required `locale`, and is used as the default.
 
 You should have a `curriculum/` directory.
 
-```js
+```js,runner=node
 const { access, constants } = await import("fs/promises");
 try {
   await access(join(project.dashedName, "curriculum"));
@@ -359,7 +359,7 @@ try {
 
 You should have a `curriculum/locales/` directory.
 
-```js
+```js,runner=node
 const { access, constants } = await import("fs/promises");
 try {
   await access(join(project.dashedName, "curriculum/locales"));
@@ -370,7 +370,7 @@ try {
 
 You should have a `curriculum/locales/english/` directory.
 
-```js
+```js,runner=node
 const { access, constants } = await import("fs/promises");
 try {
   await access(join(project.dashedName, "curriculum/locales/english"));
@@ -389,7 +389,7 @@ Create a `curriculum/locales/english/learn-freecodecamp-os.md` file.
 
 You should have a `curriculum/locales/english/learn-freecodecamp-os.md` file.
 
-```js
+```js,runner=node
 const { access, constants } = await import("fs/promises");
 try {
   await access(
@@ -417,7 +417,7 @@ Add a title to the `learn-freecodecamp-os.md` file.
 
 The `learn-freecodecamp-os.md` file should contain a title.
 
-```js
+```js,runner=node
 const { readFile } = await import("fs/promises");
 const file = await readFile(
   join(
@@ -445,7 +445,7 @@ Add the first lesson to the `learn-freecodecamp-os.md` file, with a description 
 
 The `learn-freecodecamp-os.md` file should contain a lesson.
 
-```js
+```js,runner=node
 const { readFile } = await import("fs/promises");
 const file = await readFile(
   join(
@@ -459,7 +459,7 @@ assert(file.includes("\n## 0"));
 
 The lesson should have a description heading.
 
-```js
+```js,runner=node
 const { readFile } = await import("fs/promises");
 const file = await readFile(
   join(
@@ -485,7 +485,7 @@ Signify the end of the file, by adding the following:
 
 The `learn-freecodecamp-os.md` file should contain the `--fcc-end--` marker.
 
-```js
+```js,runner=node
 const { readFile } = await import("fs/promises");
 const file = await readFile(
   join(
@@ -507,7 +507,7 @@ Within `learn-freecodecamp-os/`, create a `freecodecamp.conf.json` file.
 
 You should have a `freecodecamp.conf.json` file.
 
-```js
+```js,runner=node
 const { access, constants } = await import("fs/promises");
 try {
   await access(join(project.dashedName, "freecodecamp.conf.json"));
@@ -541,103 +541,103 @@ Within the `freecodecamp.conf.json` file, add the following:
 
 The `freecodecamp.conf.json` file should contain the `version` property.
 
-```js
+```js,runner=node
 assert.hasAllKeys(__conf, ["version"]);
 ```
 
 The `version` property should be `0.0.1`.
 
-```js
+```js,runner=node
 assert.equal(__conf.version, "0.0.1");
 ```
 
 The `freecodecamp.conf.json` file should contain the `scripts` property.
 
-```js
+```js,runner=node
 assert.hasAllKeys(__conf, ["scripts"]);
 ```
 
 The `freecodecamp.conf.json` file should contain the `config` property.
 
-```js
+```js,runner=node
 assert.hasAllKeys(__conf, ["config"]);
 ```
 
 The `config` property should be an object.
 
-```js
+```js,runner=node
 assert.isObject(__conf.config);
 ```
 
 The `config` property should contain the `projects.json` property.
 
-```js
+```js,runner=node
 assert.hasAllKeys(__conf.config, ["projects.json"]);
 ```
 
 The `projects.json` property should be a string.
 
-```js
+```js,runner=node
 assert.isString(__conf.config["projects.json"]);
 ```
 
 The `config` property should contain the `state.json` property.
 
-```js
+```js,runner=node
 assert.hasAllKeys(__conf.config, ["state.json"]);
 ```
 
 The `state.json` property should be a string.
 
-```js
+```js,runner=node
 assert.isString(__conf.config["state.json"]);
 ```
 
 The `freecodecamp.conf.json` file should contain the `curriculum` property.
 
-```js
+```js,runner=node
 assert.hasAllKeys(__conf, ["curriculum"]);
 ```
 
 The `curriculum` property should be an object.
 
-```js
+```js,runner=node
 assert.isObject(__conf.curriculum);
 ```
 
 The `curriculum` property should contain the `locales` property.
 
-```js
+```js,runner=node
 assert.hasAllKeys(__conf.curriculum, ["locales"]);
 ```
 
 The `locales` property should be an object.
 
-```js
+```js,runner=node
 assert.isObject(__conf.curriculum.locales);
 ```
 
 The `locales` property should contain the `<LOCALE>` property.
 
-```js
+```js,runner=node
 assert.hasAllKeys(__conf.curriculum.locales, ["<LOCALE>"]);
 ```
 
 The `<LOCALE>` property should be a string.
 
-```js
+```js,runner=node
 assert.isString(__conf.curriculum.locales["<LOCALE>"]);
 ```
 
 The `locales` property should contain the `<LOCALE_DIR>` property.
 
-```js
+```js,runner=node
 assert.hasAllKeys(__conf.curriculum.locales, ["<LOCALE_DIR>"]);
 ```
 
 The `<LOCALE_DIR>` property should be a string.
 
-```js
+```js,runner=node
 assert.isString(__conf.curriculum.locales["<LOCALE_DIR>"]);
 ```
 
@@ -645,7 +645,7 @@ assert.isString(__conf.curriculum.locales["<LOCALE_DIR>"]);
 
 #### --cmd--
 
-```js
+```js,runner=node
 const { readFile } = await import("fs/promises");
 const conf = await readFile(
   join(project.dashedName, "freecodecamp.conf.json"),
@@ -664,7 +664,7 @@ Within the `freecodecamp.conf.json` file, replace the `<PROJECTS_JSON>` placehol
 
 The `projects.json` property should be a relative path to the `projects.json` file.
 
-```js
+```js,runner=node
 assert.equal(__conf.config["projects.json"], "config/projects.json");
 ```
 
@@ -678,7 +678,7 @@ Within the `freecodecamp.conf.json` file, replace the `<STATE_JSON>` placeholder
 
 The `state.json` property should be a relative path to the `state.json` file.
 
-```js
+```js,runner=node
 assert.equal(__conf.config["state.json"], "config/state.json");
 ```
 
@@ -694,7 +694,7 @@ Within the `freecodecamp.conf.json` file, replace the `<LOCALE>` placeholder wit
 
 The `<LOCALE>` property should point to the locale of your course.
 
-```js
+```js,runner=node
 assert.include(
   __conf.curriculum.locales["english"],
   "curriculum/locales/english"
@@ -715,7 +715,7 @@ NODE_ENV=development node ./node_modules/@freecodecamp/freecodecamp-os/.freeCode
 
 The development server should be running.
 
-```js
+```js,runner=node
 await fetch("http://localhost:8080");
 ```
 
@@ -731,7 +731,7 @@ To move on, click the `Run Tests` button.
 
 ### --hints--
 
-#### 0
+#### --0--
 
 In VSCode, you can open a webpage within the editor by:
 
@@ -739,7 +739,7 @@ In VSCode, you can open a webpage within the editor by:
 - Typing and selecting `Simple Browser: Show`
 - Inputing the localhost URL
 
-#### 1
+#### --1--
 
 Notice this course teaching you how to create a course is itself a course, and is running on port `8080`.
 
@@ -747,7 +747,7 @@ Notice this course teaching you how to create a course is itself a course, and i
 
 This test always passes.
 
-```js
+```js,runner=node
 assert(true);
 ```
 
@@ -776,7 +776,7 @@ Did you know the "OS" in freeCodeCampOS stands for "Open Source"?
 
 ### --hints--
 
-#### 0
+#### --0--
 
 Notice the description can accept any text, and will parse it as GFM (GitHub Flavored Markdown).
 
@@ -784,7 +784,7 @@ Notice the description can accept any text, and will parse it as GFM (GitHub Fla
 
 You should add the provided text to the `learn-freecodecamp-os.md` file.
 
-```js
+```js,runner=node
 const { readFile } = await import("fs/promises");
 const file = await readFile(
   join(
@@ -823,7 +823,7 @@ Add a test by placing the 3rd-level heading `### --tests--` within the 2nd-level
 
 This is a test that will always fail.
 
-```js
+```js,runner=node
 assert.fail(
   "This is a custom test assertion message. Click the > button to go to the next lesson"
 );
@@ -832,7 +832,7 @@ assert.fail(
 
 ### --hints--
 
-#### 0
+#### --0--
 
 Tests take the form:
 
@@ -841,22 +841,22 @@ Tests take the form:
 
 <TEST_TEXT>
 
-```js
+```js,runner=node
 <TEST_CODE>
 ```
 
 <SECOND_TEST_TEXT>
 
-```js
+```js,runner=node
 <TEST_CODE>
 ```
 ````
 
-#### 1
+#### --1--
 
 The test code is evaluted in a Nodejs context. So, any Nodejs code is valid.
 
-#### 2
+#### --2--
 
 Notice the use of `assert.fail` in the test code. There are many globals available to you in the test code.
 
@@ -866,7 +866,7 @@ Read the docs to learn more.
 
 You should add the provided test to the `learn-freecodecamp-os.md` file.
 
-```js
+```js,runner=node
 const { readFile } = await import("fs/promises");
 const file = await readFile(
   join(
@@ -901,13 +901,13 @@ Add `"runTestsOnWatch": true` to the project in the `projects.json` file.
 
 The `projects.json` file should contain the `runTestsOnWatch` property.
 
-```js
+```js,runner=node
 assert.hasAllKeys(__projects[0], ["runTestsOnWatch"]);
 ```
 
 The `runTestsOnWatch` property should have a value of `true`.
 
-```js
+```js,runner=node
 assert.isTrue(__projects[0].runTestsOnWatch);
 ```
 
@@ -915,7 +915,7 @@ assert.isTrue(__projects[0].runTestsOnWatch);
 
 #### --cmd--
 
-```js
+```js,runner=node
 const { readFile } = await import("fs/promises");
 const file = await readFile(
   join(project.dashedName, "config/projects.json"),
@@ -959,7 +959,7 @@ You have learnt how to:
 
 When you are done, type `done` in the terminal.
 
-```js
+```js,runner=node
 const lastCommand = await __helpers.getLastCommand();
 assert.include(lastCommand, "done");
 ```

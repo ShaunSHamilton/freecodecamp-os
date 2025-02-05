@@ -28,24 +28,51 @@ export interface FreeCodeCampConf {
 	version: string;
 }
 
-export interface Lesson {
-	description: string;
+export interface Hint {
 	id: number;
+	text: string;
 }
 
-export interface ProjectMeta {
+export type Seed = 
+	| { type: "Command", content: {
+	runner: string;
+	code: string;
+}}
+	| { type: "File", content: {
+	path: string;
+	content: string;
+}};
+
+export interface Test {
+	code: string;
 	id: number;
-	is_public: boolean;
+	runner: string;
+	text: string;
+}
+
+export interface Lesson {
+	after_all: Seed[];
+	after_each: Seed[];
+	before_all: Seed[];
+	before_each: Seed[];
+	description: string;
+	hints: Hint[];
+	id: number;
+	seeds: Seed[];
+	tests: Test[];
+}
+
+export interface LessonMarker {
+	project_id: number;
+	lesson_id: number;
 }
 
 export interface Project {
-	description: string;
-	meta: ProjectMeta;
 	title: string;
-}
-
-export interface Seed {
-	seed_code: string;
+	description: string;
+	id: number;
+	is_public: boolean;
+	lessons: Lesson[];
 }
 
 export interface State {
@@ -53,8 +80,13 @@ export interface State {
 	completed_lessons: CompletedLesson[];
 }
 
-export interface Test {
-	test_string: string;
-	test_code: string;
-}
+export type TestState = 
+	/** Test has not run yet, or was cancelled */
+	| { type: "Neutral", content?: undefined }
+	/** Test passed */
+	| { type: "Passed", content?: undefined }
+	/** Test failed with output */
+	| { type: "Failed", content: string }
+	/** Test is running */
+	| { type: "Running", content?: undefined };
 

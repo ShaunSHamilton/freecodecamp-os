@@ -1,4 +1,4 @@
-use std::{iter::Cloned, path::PathBuf, str::FromStr, vec::IntoIter};
+use std::{path::PathBuf, str::FromStr};
 
 use config::{Hint, Lesson, Project, Seed, Test};
 use itertools::Itertools;
@@ -19,17 +19,6 @@ pub trait FromMdast {
 impl FromMdast for Project {
     fn from_mdast(nodes: Vec<Node>) -> Result<Self, ParseError> {
         let mut it = nodes.into_iter().peekable();
-
-        // let project_meta_nodes = it
-        //     .peeking_take_while(|node| {
-        //         if let Node::Heading(h) = node {
-        //             if h.depth == 2 && h.children.stringify().trim().parse::<usize>().is_ok() {
-        //                 return false;
-        //             }
-        //         }
-        //         true
-        //     })
-        //     .collect::<Vec<Node>>();
 
         let title = it
             .next()
@@ -115,115 +104,6 @@ impl FromMdast for Lesson {
             .parse::<usize>()
             .unwrap();
 
-        // // Split lesson up into chunks of headings
-        // let mut description = None;
-        // let mut tests = vec![];
-        // let mut seeds = vec![];
-        // let mut hints = vec![];
-        // let mut before_all = vec![];
-        // let mut before_each = vec![];
-        // let mut after_all = vec![];
-        // let mut after_each = vec![];
-
-        // let chunks = it.fold(vec![], |mut acc, node| {
-        //     match node {
-        //         Node::Heading(h) => {
-        //             let heading_text = h.children.stringify();
-        //             let heading_text = heading_text.trim();
-
-        //             if h.depth == 3
-        //                 && heading_text.starts_with("\\--")
-        //                 && heading_text.ends_with("--")
-        //             {
-        //                 acc.push(vec![node]);
-        //             } else {
-        //                 acc.last_mut().unwrap().push(node);
-        //             }
-        //         }
-        //         _ => {
-        //             acc.last_mut().unwrap().push(node);
-        //         }
-        //     }
-        //     acc
-        // });
-
-        // for chunk in chunks {
-        //     let mut chunk = chunk.into_iter().cloned();
-        //     println!("{:?}\n\n", chunk);
-        //     let heading = chunk.next().as_heading().context("chunk heading")?;
-        //     let heading_text = heading.children.stringify();
-        //     let heading_text = heading_text.trim();
-        //     match heading_text {
-        //         "\\--description--" => {
-        //             description = Some(chunk.collect::<Vec<Node>>().stringify());
-        //         }
-        //         "\\--tests--" => {
-        //             // Generate chunks of `tests_nodes` in twos where (Paragraph(p), Code(c))
-        //             let tests_chunks = chunk.collect::<Vec<Node>>();
-        //             let tests_chunks = tests_chunks.chunks(2);
-        //             for (id, chunk) in tests_chunks.enumerate() {
-        //                 let text_node = chunk
-        //                     .get(0)
-        //                     .as_paragraph()
-        //                     .unwrap()
-        //                     .children
-        //                     .get(0)
-        //                     .as_text()
-        //                     .unwrap();
-        //                 let code_node = chunk.get(1).as_code().unwrap();
-
-        //                 let test = Test {
-        //                     runner: code_node.lang.clone().unwrap().into(),
-        //                     id,
-        //                     text: text_node.value.clone(),
-        //                     code: code_node.value.clone(),
-        //                 };
-
-        //                 tests.push(test);
-        //             }
-        //         }
-        //         "\\--seed--" => {
-        //             seeds = chunk_to_seeds(chunk)?;
-        //         }
-        //         "\\--hints--" => {}
-        //         "\\--before-all--" => {
-        //             before_all = chunk_to_seeds(chunk)?;
-        //         }
-        //         "\\--before-each--" => {
-        //             before_each = chunk_to_seeds(chunk)?;
-        //         }
-        //         "\\--after-all--" => {
-        //             after_all = chunk_to_seeds(chunk)?;
-        //         }
-        //         "\\--after-each--" => {
-        //             after_each = chunk_to_seeds(chunk)?;
-        //         }
-        //         _ => {
-        //             return Err(ParseError::BadNode(heading_text.to_string()));
-        //         }
-        //     }
-        // }
-
-        // let description = description.context("### --description-- is required")?;
-        // let mut it = nodes.into_iter().peekable();
-        // let lesson_meta_nodes = it.peeking_take_while(|node| {
-        //     if let Node::Heading(h) = node {
-        //         let heading_text = h.children.stringify();
-        //         let heading_text = heading_text.trim();
-
-        //         if h.depth == 3 && heading_text.starts_with("\\--") && heading_text.ends_with("--")
-        //         {
-        //             return false;
-        //         }
-        //     }
-        // });
-        // let hooks = Hook {
-        //     before_all,
-        //     before_each,
-        //     after_all,
-        //     after_each,
-        // };
-
         let heads: Vec<Head> = it.fold(vec![], fold_into_heads);
 
         let mut hints = vec![];
@@ -237,17 +117,33 @@ impl FromMdast for Lesson {
 
         for head in heads {
             match head.heading.children.stringify().trim() {
-                "\\--before-all--" => {
-                    // before_all = head.nodes.into_iter().fold(vec![], fold_into_heads);
-                }
-                "\\--before-each--" => {
-                    // before_each = head.nodes.into_iter().fold(vec![], fold_into_heads);
-                }
                 "\\--after-all--" => {
-                    // after_all = head.nodes.into_iter().fold(vec![], fold_into_heads);
+                    let heads = head.nodes.into_iter().skip(1).fold(vec![], fold_into_heads);
+                    for head in heads {
+                        let seed = Seed::from_mdast(head.nodes)?;
+                        after_all.push(seed);
+                    }
                 }
                 "\\--after-each--" => {
-                    // after_each = head.nodes.into_iter().fold(vec![], fold_into_heads);
+                    let heads = head.nodes.into_iter().skip(1).fold(vec![], fold_into_heads);
+                    for head in heads {
+                        let seed = Seed::from_mdast(head.nodes)?;
+                        after_each.push(seed);
+                    }
+                }
+                "\\--before-all--" => {
+                    let heads = head.nodes.into_iter().skip(1).fold(vec![], fold_into_heads);
+                    for head in heads {
+                        let seed = Seed::from_mdast(head.nodes)?;
+                        before_all.push(seed);
+                    }
+                }
+                "\\--before-each--" => {
+                    let heads = head.nodes.into_iter().skip(1).fold(vec![], fold_into_heads);
+                    for head in heads {
+                        let seed = Seed::from_mdast(head.nodes)?;
+                        before_each.push(seed);
+                    }
                 }
                 "\\--description--" => {
                     description = Some(
@@ -260,13 +156,29 @@ impl FromMdast for Lesson {
                 }
                 "\\--hints--" => {
                     let heads = head.nodes.into_iter().skip(1).fold(vec![], fold_into_heads);
+                    for head in heads {
+                        let hint = Hint::from_mdast(head.nodes)?;
+                        hints.push(hint);
+                    }
                 }
-                "\\--seeds--" => {
-                    let heads = head.nodes.into_iter().fold(vec![], fold_into_heads);
+                "\\--seed--" => {
+                    let heads = head.nodes.into_iter().skip(1).fold(vec![], fold_into_heads);
+                    for head in heads {
+                        let seed = Seed::from_mdast(head.nodes)?;
+                        seeds.push(seed);
+                    }
                 }
                 "\\--tests--" => {
-                    let heads = head.nodes.into_iter().skip(1).fold(vec![], fold_into_heads);
-                    println!("{:?}", heads);
+                    let chunks = head.nodes.into_iter().skip(1).chunks(2);
+
+                    let mut id = 0;
+                    for chunk in &chunks {
+                        let nodes = chunk.collect();
+                        let mut test = Test::from_mdast(nodes)?;
+                        test.id = id;
+                        tests.push(test);
+                        id += 1;
+                    }
                 }
                 _ => {
                     return Err(ParseError::BadNode(head.heading.children.stringify()));
@@ -307,7 +219,11 @@ fn fold_into_heads(mut acc: Vec<Head>, node: Node) -> Vec<Head> {
             let heading_text = h.children.stringify();
             let heading_text = heading_text.trim();
 
-            if h.depth == 3 && heading_text.starts_with("\\--") && heading_text.ends_with("--") {
+            let depth = acc.first().map(|h| h.heading.depth);
+            if (depth.is_none() || h.depth == depth.unwrap())
+                && heading_text.starts_with("\\--")
+                && heading_text.ends_with("--")
+            {
                 acc.push(Head {
                     heading: h.clone(),
                     nodes: vec![node],
@@ -324,11 +240,35 @@ fn fold_into_heads(mut acc: Vec<Head>, node: Node) -> Vec<Head> {
 }
 
 impl FromMdast for Test {
-    fn from_mdast(node: Vec<Node>) -> Result<Self, ParseError>
+    fn from_mdast(nodes: Vec<Node>) -> Result<Self, ParseError>
     where
         Self: Sized,
     {
-        todo!()
+        let text = nodes
+            .get(0)
+            .as_paragraph()
+            .context("missing test text")?
+            .children
+            .stringify();
+
+        let code_node = nodes.get(1).as_code().context("missing test code")?;
+        let runner = code_node
+            .lang
+            .context("missing code lang")?
+            .split("runner=")
+            .nth(1)
+            .context(&format!("missing runner: {:?}", nodes.stringify()))?
+            .to_string();
+        let code = code_node.value;
+
+        let test = Test {
+            runner,
+            text,
+            code,
+            id: 0,
+        };
+
+        Ok(test)
     }
 }
 
@@ -337,34 +277,13 @@ impl FromMdast for Seed {
     where
         Self: Sized,
     {
-        todo!()
-    }
-}
+        let heading = node.get(0).as_heading().context("missing seed heading")?;
 
-impl FromMdast for Hint {
-    fn from_mdast(node: Vec<Node>) -> Result<Self, ParseError>
-    where
-        Self: Sized,
-    {
-        todo!()
-    }
-}
-
-fn chunk_to_seeds(chunk: Cloned<IntoIter<&Node>>) -> Result<Vec<Seed>, ParseError> {
-    let chunk = chunk.collect::<Vec<Node>>();
-    // println!("{:?}\n\n", chunk);
-    let seed_chunks = chunk.chunks(2);
-
-    // println!("{:?}\n\n", seed_chunks);
-
-    let mut seeds = vec![];
-    for chunk in seed_chunks {
-        let heading = chunk.get(0).as_heading().context(&format!("{:?}", chunk))?;
         let heading_text = heading.children.stringify();
         let heading_text = heading_text.trim();
 
         let seed = if heading_text == "\\--cmd--" {
-            let code_node = chunk.get(1).as_code().unwrap();
+            let code_node = node.get(1).as_code().unwrap();
             let seed = Seed::Command {
                 runner: code_node.lang.clone().unwrap().into(),
                 code: code_node.value.clone(),
@@ -377,7 +296,7 @@ fn chunk_to_seeds(chunk: Cloned<IntoIter<&Node>>) -> Result<Vec<Seed>, ParseErro
         {
             let path = PathBuf::from_str(path).unwrap();
 
-            let content = chunk.get(1).as_code().unwrap().value.clone();
+            let content = node.get(1).as_code().unwrap().value.clone();
 
             let seed = Seed::File { path, content };
             seed
@@ -385,8 +304,31 @@ fn chunk_to_seeds(chunk: Cloned<IntoIter<&Node>>) -> Result<Vec<Seed>, ParseErro
             return Err(ParseError::BadNode(heading_text.to_string()));
         };
 
-        seeds.push(seed);
+        Ok(seed)
     }
+}
 
-    Ok(seeds)
+impl FromMdast for Hint {
+    fn from_mdast(node: Vec<Node>) -> Result<Self, ParseError>
+    where
+        Self: Sized,
+    {
+        let heading = node.get(0).as_heading().context("missing hint heading")?;
+        let heading_text = heading.children.stringify();
+        let heading_text = heading_text
+            .trim()
+            .strip_prefix("\\--")
+            .unwrap()
+            .strip_suffix("--")
+            .unwrap();
+
+        let id = heading_text
+            .parse()
+            .expect(format!("hint id is not a number: {}", heading_text).as_str());
+
+        let text = node.into_iter().skip(1).collect::<Vec<Node>>().stringify();
+
+        let hint = Hint { id, text };
+        Ok(hint)
+    }
 }

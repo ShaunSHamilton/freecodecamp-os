@@ -53,7 +53,7 @@ pub fn read_lesson(project_id: usize, lesson_id: usize) -> Lesson {
 
             let project = parse_project(&file).unwrap();
 
-            if project.meta.id == project_id {
+            if project.id == project_id {
                 return Some(project);
             }
         }
@@ -64,7 +64,7 @@ pub fn read_lesson(project_id: usize, lesson_id: usize) -> Lesson {
         .unwrap()
         .lessons
         .into_iter()
-        .find(|l| l.meta.id == lesson_id)
+        .find(|l| l.id == lesson_id)
         .unwrap();
 
     lesson

@@ -38,6 +38,7 @@ pub enum Locale {
 pub struct Project {
     pub title: String,
     pub description: String,
+    #[typeshare(serialized_as = "number")]
     pub id: usize,
     pub is_public: bool,
     pub lessons: Vec<Lesson>,
@@ -50,8 +51,9 @@ pub struct Lesson {
     pub after_each: Vec<Seed>,
     pub before_all: Vec<Seed>,
     pub before_each: Vec<Seed>,
-    pub hints: Vec<Hint>,
     pub description: String,
+    pub hints: Vec<Hint>,
+    #[typeshare(serialized_as = "number")]
     pub id: usize,
     pub seeds: Vec<Seed>,
     pub tests: Vec<Test>,
@@ -60,6 +62,7 @@ pub struct Lesson {
 #[typeshare]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Hint {
+    #[typeshare(serialized_as = "number")]
     pub id: usize,
     pub text: String,
 }
@@ -67,21 +70,31 @@ pub struct Hint {
 #[typeshare]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Test {
+    pub code: String,
+    #[typeshare(serialized_as = "number")]
+    pub id: usize,
     pub runner: String,
     pub text: String,
-    pub code: String,
-    pub id: usize,
 }
 
 #[typeshare]
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type", content = "content")]
 pub enum Seed {
-    Command { runner: String, code: String },
-    File { path: PathBuf, content: String },
+    Command {
+        runner: String,
+        code: String,
+    },
+    File {
+        #[typeshare(serialized_as = "string")]
+        path: PathBuf,
+        content: String,
+    },
 }
 
 #[typeshare]
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(tag = "type", content = "content")]
 pub enum TestState {
     /// Test has not run yet, or was cancelled
     Neutral,

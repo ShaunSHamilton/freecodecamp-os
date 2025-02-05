@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use config::Project;
 use convert::FromMdast;
 use markdown::{mdast::Node, to_mdast, ParseOptions};
@@ -5,9 +7,19 @@ use markdown::{mdast::Node, to_mdast, ParseOptions};
 mod convert;
 mod node_ext;
 
-#[derive(Debug)]
 pub enum ParseError {
     BadNode(String),
+}
+
+impl Debug for ParseError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::BadNode(arg0) => {
+                let s = format!("Bad Node:\n{}", arg0);
+                write!(f, "{}", s)
+            }
+        }
+    }
 }
 
 impl From<Option<Node>> for ParseError {

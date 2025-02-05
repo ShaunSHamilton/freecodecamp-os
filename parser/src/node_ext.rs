@@ -1,11 +1,10 @@
-use markdown::mdast::{Code, Heading, Node, Paragraph, Text};
+use markdown::mdast::{Code, Heading, Node, Paragraph};
 use mdast_util_to_markdown::to_markdown;
 
 pub trait NodeExt {
     fn as_heading(self) -> Option<Heading>;
     fn as_paragraph(self) -> Option<Paragraph>;
     fn as_code(self) -> Option<Code>;
-    fn as_text(self) -> Option<Text>;
 }
 
 impl NodeExt for Option<Node> {
@@ -26,13 +25,6 @@ impl NodeExt for Option<Node> {
     fn as_code(self) -> Option<Code> {
         match self {
             Some(Node::Code(code)) => Some(code),
-            _ => None,
-        }
-    }
-
-    fn as_text(self) -> Option<Text> {
-        match self {
-            Some(Node::Text(text)) => Some(text),
             _ => None,
         }
     }
@@ -58,13 +50,6 @@ impl NodeExt for Option<&Node> {
             _ => None,
         }
     }
-
-    fn as_text(self) -> Option<Text> {
-        match self {
-            Some(Node::Text(text)) => Some(text.clone()),
-            _ => None,
-        }
-    }
 }
 impl NodeExt for Option<&mut Node> {
     fn as_heading(self) -> Option<Heading> {
@@ -84,13 +69,6 @@ impl NodeExt for Option<&mut Node> {
     fn as_code(self) -> Option<Code> {
         match self {
             Some(Node::Code(ref code)) => Some(code.clone()),
-            _ => None,
-        }
-    }
-
-    fn as_text(self) -> Option<Text> {
-        match self {
-            Some(Node::Text(ref text)) => Some(text.clone()),
             _ => None,
         }
     }

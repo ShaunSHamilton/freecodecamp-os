@@ -85,10 +85,7 @@ pub async fn handle_get_projects() -> Json<Vec<Project>> {
 
 pub async fn handle_get_project(Path(project_id): Path<usize>) -> Json<Project> {
     let projects = read_projects();
-    let project = projects
-        .into_iter()
-        .find(|p| p.meta.id == project_id)
-        .unwrap();
+    let project = projects.into_iter().find(|p| p.id == project_id).unwrap();
     Json(project)
 }
 
