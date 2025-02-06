@@ -1,8 +1,8 @@
 #![allow(unused_variables)]
-use std::{path::PathBuf, str::FromStr};
+use std::{path::PathBuf, process::Command, str::FromStr};
 
 use axum::{
-    extract::Path,
+    extract::{Path, State},
     http::header::{CACHE_CONTROL, CONTENT_TYPE},
     response::{Html, IntoResponse, Response},
     Json,
@@ -10,22 +10,26 @@ use axum::{
 
 use include_dir::{include_dir, Dir};
 
-use config::{FreeCodeCampConf, Lesson, LessonMarker, Project, State};
+use config::{FreeCodeCampConf, Lesson, LessonMarker, Project};
 
-use crate::utils::{read_config, read_lesson, read_projects, read_state, set_state};
+use crate::{
+    errors::AppError,
+    state::AppState,
+    utils::{read_config, read_lesson, read_projects, read_state, set_state},
+};
 
 const INDEX_HTML: &str = include_str!("../../../client/dist/index.html");
 
 static DIST_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/../client/dist");
 
 pub async fn handle_assets(Path(path): Path<PathBuf>) -> Response {
-    // let manifest = serde_json::from_str::<HashMap<String, Manifest>>(MANIFEST).unwrap();
     println!("{path:?}");
 
     let content_type = match path.extension() {
         Some(ext) => match ext.to_str().unwrap() {
             "js" => "application/javascript",
             "css" => "text/css",
+            "html" => "text/html",
             _ => "application/octet-stream",
         },
         None => "application/octet-stream",
@@ -55,18 +59,18 @@ pub async fn handle_project_lesson(
     Json(lesson)
 }
 
-pub async fn handle_get_config() -> Json<FreeCodeCampConf> {
-    let config = read_config();
-    Json(config)
+pub async fn handle_get_config() -> Result<Json<FreeCodeCampConf>, AppError> {
+    let config = read_config()?;
+    Ok(Json(config))
 }
 
-pub async fn handle_get_state() -> Json<State> {
-    let state = read_state();
+pub async fn handle_get_state(State(state): State<AppState>) -> Json<config::State> {
+    let state = read_state(&state.config);
 
     Json(state)
 }
 
-pub async fn handle_post_state(Json(state): Json<State>) {
+pub async fn handle_post_state(Json(state): Json<config::State>) {
     set_state(state);
 }
 
@@ -90,8 +94,33 @@ pub async fn handle_get_project(Path(project_id): Path<usize>) -> Json<Project> 
 }
 
 /// Handles the running of tests.
-pub async fn handle_run_tests(Json(_meta): Json<LessonMarker>) {
-    todo!();
+pub async fn handle_run_tests(State(state): State<AppState>, Json(meta): Json<LessonMarker>) {
+    // Get lesson
+    let lesson = read_lesson(meta.project_id, meta.lesson_id);
+    // Call runner
+    let runners = state.config.runners;
+    // Run before alls
+    let before_all = lesson.before_all;
+
+    for test in lesson.tests {
+        // Run before each
+        // Run test
+        let mut runner = runners.get(&test.runner).unwrap().split_whitespace();
+        let runner_name = runner.next().unwrap();
+        let runner_args = runner.collect::<Vec<&str>>();
+        let output = Command::new(runner_name)
+            .args(runner_args)
+            .arg(test.code)
+            .output()
+            .unwrap();
+
+        println!("{}", String::from_utf8_lossy(&output.stdout));
+        eprintln!("{}", String::from_utf8_lossy(&output.stderr));
+        // Run after each
+    }
+
+    // Run after alls
+    let after_all = lesson.after_all;
 }
 
 /// Handles a lesson submission.

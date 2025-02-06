@@ -49,22 +49,7 @@ export const ProjectLesson = ({
 
         <Description description={data.lesson.description} />
 
-        <Controls
-        // {...(project.isIntegrated
-        //   ? {
-        //       cancelTests,
-        //       runTests,
-        //       tests,
-        //     }
-        //   : {
-        //       cancelTests,
-        //       runTests,
-        //       resetProject,
-        //       isResetEnabled: project.isResetEnabled,
-        //       tests,
-        //       loader,
-        //     })}
-        />
+        <Controls project={data.project} lesson={data.lesson} />
 
         {/* <Output {...{ hints, tests, cons }} /> */}
       </div>

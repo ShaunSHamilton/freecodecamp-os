@@ -1,4 +1,10 @@
-import { FreeCodeCampConf, Lesson, Project, State } from "../types";
+import {
+  FreeCodeCampConf,
+  Lesson,
+  LessonMarker,
+  Project,
+  State,
+} from "../types";
 
 interface GetProjectArgs {
   project_id: number;
@@ -42,4 +48,14 @@ export async function getState() {
   const state: State = await res.json();
 
   return state;
+}
+
+export async function runTests({ project_id, lesson_id }: LessonMarker) {
+  const res = await fetch(`/tests/run`, {
+    method: "POST",
+    body: JSON.stringify({ project_id, lesson_id }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 }

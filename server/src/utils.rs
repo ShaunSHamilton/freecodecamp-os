@@ -1,16 +1,64 @@
+use std::{
+    fs::{read_dir, read_to_string, ReadDir},
+    path::PathBuf,
+};
+
+use anyhow::Context;
 use config::{FreeCodeCampConf, Lesson, Project, State};
 use parser::parse_project;
 
-pub fn read_config() -> FreeCodeCampConf {
-    let config_file = std::fs::read_to_string("./example/freecodecamp.conf.json").unwrap();
+/// Read `freecodecamp.conf.json` in root
+pub fn read_config() -> anyhow::Result<FreeCodeCampConf> {
+    // let dir =
+    //     read_dir("./").context("unable to search directories for freecodecamp.conf.json file")?;
 
-    let config: FreeCodeCampConf = serde_json::from_str(&config_file).unwrap();
+    // if let Some(path) = recurse_dir_until_file(dir, 0) {
+    //     let config_file =
+    //         read_to_string(path).context("unable to read freecodecamp.conf.json file")?;
+    //     let config: FreeCodeCampConf =
+    //         serde_json::from_str(&config_file).context("bad freecodecamp.conf.json format")?;
+    //     return Ok(config);
+    // }
 
-    config
+    let config_file = read_to_string("./freecodecamp.conf.json")
+        .context("unable to read freecodecamp.conf.json file in root")?;
+    let config: FreeCodeCampConf =
+        serde_json::from_str(&config_file).context("bad freecodecamp.conf.json format")?;
+
+    Ok(config)
 }
 
-pub fn read_state() -> State {
-    let state_file = std::fs::read_to_string("./example/state.json").unwrap();
+fn _recurse_dir_until_file(dir: ReadDir, depth: usize) -> Option<PathBuf> {
+    if depth >= 3 {
+        return None;
+    }
+
+    for entity in dir {
+        if let Ok(entity) = entity {
+            if let Ok(file_type) = entity.file_type() {
+                let path = entity.path();
+
+                if file_type.is_file() && path.ends_with("freecodecamp.conf.json") {
+                    return Some(path);
+                }
+
+                if file_type.is_dir() {
+                    if let Ok(dir) = read_dir(path) {
+                        if let Some(found) = _recurse_dir_until_file(dir, depth + 1) {
+                            return Some(found);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    None
+}
+
+pub fn read_state(config: &FreeCodeCampConf) -> State {
+    let state_path = &config.config.state;
+    let state_file = std::fs::read_to_string(state_path).unwrap();
 
     let state: State = serde_json::from_str(&state_file).unwrap();
 

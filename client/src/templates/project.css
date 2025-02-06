@@ -172,3 +172,7 @@ nav {
 details > summary > p {
   display: inline;
 }
+
+img {
+  width: 100%;
+}

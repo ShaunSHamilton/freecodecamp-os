@@ -15,7 +15,7 @@ fn main() {
 
     match args.runner {
         cli::Runner::Node => {
-            let test_meta_json = args.test_meta;
+            let test_meta_json = args.content;
 
             // Create a temporary file for the Node.js script
             let mut script_file = NamedTempFile::new().expect("Failed to create temp file");

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { FreeCodeCampConf, Locale, Project } from "../types.ts";
+import { FreeCodeCampConf, Project } from "../types.ts";
 import { Selection } from "../components/selection";
 import "./landing.css";
 import { F } from "../utils/index.ts";
@@ -52,7 +52,7 @@ export const landingLoader = async () => {
   const config: FreeCodeCampConf = await (await fetch("/config")).json();
 
   const state = {
-    locale: Locale.En,
+    locale: "en",
   };
 
   return {

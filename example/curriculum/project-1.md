@@ -31,6 +31,8 @@ Start by opening the `curriculum/locales/english/learn-freecodecamp-os.md` file 
 
 Did you know the "OS" in freeCodeCampOS stands for "Open Source"?
 
+![image](./images/image.png)
+
 </details>
 
 ### --tests--
@@ -38,6 +40,7 @@ Did you know the "OS" in freeCodeCampOS stands for "Open Source"?
 This is a test that will always pass.
 
 ```js,runner=node
+console.log("Test");
 assert(true);
 ```
 

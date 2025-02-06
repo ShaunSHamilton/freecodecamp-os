@@ -6,7 +6,8 @@ import { Project } from "../types";
 type BlockProps = Project & { set_project_id: F<number, void> };
 
 export const Block = ({
-  meta: { id, is_public },
+  id,
+  is_public,
   description,
   title,
   set_project_id,

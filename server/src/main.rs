@@ -2,14 +2,31 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use state::AppState;
+use tower_http::services::ServeDir;
+use utils::read_config;
 
+mod errors;
 mod routes;
+mod state;
 mod utils;
 
 #[tokio::main]
 async fn main() {
-    // build our application with a single route
-    let app = Router::new()
+    let config = match read_config() {
+        Ok(config) => config,
+        Err(e) => {
+            eprintln!("ERROR:");
+            eprintln!("{}", e);
+            std::process::exit(1);
+        }
+    };
+
+    let app_state = AppState {
+        config: config.clone(),
+    };
+
+    let mut app = Router::new()
         .route("/", get(routes::handle_index))
         .route("/assets/{path}", get(routes::handle_assets))
         .route(
@@ -31,10 +48,18 @@ async fn main() {
             post(routes::handle_post_project),
         )
         .route("/tests/run", post(routes::handle_run_tests))
-        .route("/tests/cancel", post(routes::handle_cancel_tests));
+        .route("/tests/cancel", post(routes::handle_cancel_tests))
+        .with_state(app_state);
 
-    // run our app with hyper, listening globally on port 3000
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
-    println!("Listening on: http://localhost:3000/");
+    for stat in config.client._static.iter() {
+        app = app.nest_service(stat.0.to_str().unwrap(), ServeDir::new(stat.1));
+    }
+
+    let listener = tokio::net::TcpListener::bind(config.addr).await.unwrap();
+    println!(
+        "Listening on http://127.0.0.1:{}",
+        listener.local_addr().unwrap().port()
+    );
+
     axum::serve(listener, app).await.unwrap();
 }

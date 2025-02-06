@@ -1,36 +1,40 @@
-use std::{collections::HashMap, path::PathBuf};
+use std::{collections::HashMap, net::SocketAddr, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
 use typeshare::typeshare;
 
 #[typeshare]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FreeCodeCampConf {
     pub client: Client,
     pub version: String,
+    #[typeshare(serialize_as = "string")]
+    pub addr: SocketAddr,
+    pub config: Config,
+    pub runners: HashMap<String, String>,
 }
 
 #[typeshare]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Config {
+    pub state: PathBuf,
+}
+
+#[typeshare]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Client {
-    landing: HashMap<Locale, Landing>,
+    pub landing: HashMap<String, Landing>,
+    #[serde(rename = "static")]
+    pub _static: HashMap<PathBuf, PathBuf>,
 }
 
 #[typeshare]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Landing {
     pub title: String,
     pub description: String,
     pub faq_link: String,
     pub faq_text: String,
-}
-
-#[typeshare]
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Hash)]
-#[serde(rename_all = "lowercase")]
-pub enum Locale {
-    En,
-    Af,
 }
 
 #[typeshare]
@@ -109,20 +113,20 @@ pub enum TestState {
 #[typeshare]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct State {
-    pub locale: Locale,
+    pub locale: String,
     pub completed_lessons: Vec<CompletedLesson>,
 }
 
 #[typeshare]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CompletedLesson {
-    pub project_id: u16,
-    pub lesson_id: u16,
+    pub project_id: usize,
+    pub lesson_id: usize,
 }
 
 #[typeshare]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct LessonMarker {
-    pub project_id: u16,
-    pub lesson_id: u16,
+    pub project_id: usize,
+    pub lesson_id: usize,
 }

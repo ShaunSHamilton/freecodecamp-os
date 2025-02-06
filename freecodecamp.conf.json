@@ -1,0 +1,28 @@
+{
+  "addr": "0.0.0.0:8080",
+  "version": "0.1.0",
+  "client": {
+    "landing": {
+      "en": {
+        "title": "freeCodeCamp-OS",
+        "description": "Placeholder description",
+        "faq_link": "https://freecodecamp.org",
+        "faq_text": "Link to FAQ related to course"
+      }
+    },
+    "static": {
+      "/images": "./example/curriculum/images"
+    }
+  },
+  "curriculum": {
+    "locales": {
+      "en": "./example/curriculum"
+    }
+  },
+  "config": {
+    "state": "./example/state.json"
+  },
+  "runners": {
+    "node": "cargo run -p runner -- --runner node"
+  }
+}

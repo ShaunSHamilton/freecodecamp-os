@@ -15,3 +15,5 @@ typeshare = "1.0.4"
 uuid = { version = "1.11.0", features = ["serde", "v7"] }
 config = { path = "../config" }
 parser = { path = "../parser" }
+anyhow = "1.0.95"
+tower-http = { version = "0.6.2", features = ["fs"] }

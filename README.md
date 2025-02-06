@@ -162,3 +162,13 @@ Gets the Markdown file for the lesson data.
 - `UPDATE_HINTS`
 - `CANCEL_TESTS`
 - `RESPONSE`
+
+## TODO
+
+- Frontend
+  - [ ] Improve dev setup to handle reloads whilst keeping state
+  - [ ] Websockets for tests
+    - Create connection on `/tests/run` request, and kill it once all tests complete
+    - Add `/tests/cancel` to websockets?
+- Backend
+  - [ ] Before/After hooks

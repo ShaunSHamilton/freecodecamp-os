@@ -24,9 +24,9 @@ export const Selection = ({ set_project_id }: SelectionProps) => {
   return (
     <ul className="blocks">
       {projectsQuery.data
-        .sort((a, b) => a.meta.id - b.meta.id)
+        .sort((a, b) => a.id - b.id)
         .map((p) => {
-          return <Block key={p.meta.id} {...{ ...p, set_project_id }} />;
+          return <Block key={p.id} {...{ ...p, set_project_id }} />;
         })}
     </ul>
   );
