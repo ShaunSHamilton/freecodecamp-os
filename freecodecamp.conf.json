@@ -21,8 +21,5 @@
   },
   "config": {
     "state": "./example/state.json"
-  },
-  "runners": {
-    "node": "cargo run -p runner -- --runner node"
   }
 }

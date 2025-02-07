@@ -1,4 +1,4 @@
-use std::{collections::HashMap, net::SocketAddr, path::PathBuf};
+use std::{collections::HashMap, net::SocketAddr, path::PathBuf, str::FromStr};
 
 use serde::{Deserialize, Serialize};
 use typeshare::typeshare;
@@ -11,7 +11,6 @@ pub struct FreeCodeCampConf {
     #[typeshare(serialize_as = "string")]
     pub addr: SocketAddr,
     pub config: Config,
-    pub runners: HashMap<String, String>,
 }
 
 #[typeshare]
@@ -77,7 +76,7 @@ pub struct Test {
     pub code: String,
     #[typeshare(serialized_as = "number")]
     pub id: usize,
-    pub runner: String,
+    pub runner: Runner,
     pub text: String,
 }
 
@@ -86,7 +85,7 @@ pub struct Test {
 #[serde(tag = "type", content = "content")]
 pub enum Seed {
     Command {
-        runner: String,
+        runner: Runner,
         code: String,
     },
     File {
@@ -94,6 +93,41 @@ pub enum Seed {
         path: PathBuf,
         content: String,
     },
+}
+
+#[typeshare]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type", content = "content")]
+pub enum Runner {
+    Node,
+    Rust,
+    Bash,
+}
+
+impl FromStr for Runner {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let s = s.split("runner=").nth(1).unwrap();
+        match s {
+            "node" => Ok(Self::Node),
+            "rust" => Ok(Self::Rust),
+            "bash" => Ok(Self::Bash),
+            _ => Err(()),
+        }
+    }
+}
+
+impl From<String> for Runner {
+    fn from(s: String) -> Self {
+        let s = s.split("runner=").nth(1).unwrap();
+        match s {
+            "node" => Self::Node,
+            "rust" => Self::Rust,
+            "bash" => Self::Bash,
+            _ => panic!("Invalid runner"),
+        }
+    }
 }
 
 #[typeshare]

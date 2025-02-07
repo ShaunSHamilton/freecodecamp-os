@@ -385,6 +385,7 @@ dependencies = [
  "config",
  "include_dir",
  "parser",
+ "runner",
  "serde",
  "serde_json",
  "tokio",

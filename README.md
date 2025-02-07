@@ -47,18 +47,6 @@ Where, if no runner name is specified, the Markdown codeblock language is used a
 
 A Runner is no more than a command that is passed a JSON-serializable string of the test meta - hooks, helpers, test code.
 
-The runner name is mapped in the `freecodecamp.conf.json`:
-
-```json
-{
-  "runners": {
-    "rust": "runner rust",
-    "js": "node --eval",
-    "python": "runner python"
-  }
-}
-```
-
 Whether or not the runner is run in parallel or not is determined by the project configuration.
 
 By default, if no matching `runners` key is found for a runner name, the included `runner` binary is tried. If the test runner is not available in the `runner` binary, the test is skipped, and a warning is logged.

@@ -252,13 +252,8 @@ impl FromMdast for Test {
             .stringify();
 
         let code_node = nodes.get(1).as_code().context("missing test code")?;
-        let runner = code_node
-            .lang
-            .context("missing code lang")?
-            .split("runner=")
-            .nth(1)
-            .context(&format!("missing runner: {:?}", nodes.stringify()))?
-            .to_string();
+        let code_lang = code_node.lang.context("missing code lang")?;
+        let runner = code_lang.into();
         let code = code_node.value;
 
         let test = Test {
