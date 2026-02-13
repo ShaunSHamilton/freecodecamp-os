@@ -50,10 +50,10 @@ pub struct Project {
 #[typeshare]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Lesson {
-    pub after_all: Vec<Seed>,
-    pub after_each: Vec<Seed>,
-    pub before_all: Vec<Seed>,
-    pub before_each: Vec<Seed>,
+    pub after_all: Option<Seed>,
+    pub after_each: Option<Seed>,
+    pub before_all: Option<Seed>,
+    pub before_each: Option<Seed>,
     pub description: String,
     pub hints: Vec<Hint>,
     #[typeshare(serialized_as = "number")]
@@ -131,15 +131,15 @@ impl From<String> for Runner {
 }
 
 #[typeshare]
-#[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(tag = "type", content = "content")]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(tag = "kind", content = "content", rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum TestState {
     /// Test has not run yet, or was cancelled
     Neutral,
     /// Test passed
     Passed,
     /// Test failed with output
-    Failed(String),
+    Failed(serde_json::Value),
     /// Test is running
     Running,
 }

@@ -1,8 +1,11 @@
 use axum::{
+    extract::ws::{Message, Utf8Bytes},
     routing::{get, post},
     Router,
 };
+use notify::{Event, RecursiveMode, Watcher};
 use state::AppState;
+use tokio::sync::{watch, Mutex};
 use tower_http::services::ServeDir;
 use utils::read_config;
 
@@ -22,12 +25,46 @@ async fn main() {
         }
     };
 
+    let (tx, rx) = watch::channel(Message::Text(Utf8Bytes::from_static("")));
+
     let app_state = AppState {
         config: config.clone(),
+        rx,
     };
+
+    tokio::spawn(async move {
+        let (notify_tx, notify_rx) = std::sync::mpsc::channel::<notify::Result<Event>>();
+
+        // Use recommended_watcher() to automatically select the best implementation
+        // for your platform. The `EventHandler` passed to this constructor can be a
+        // closure, a `std::sync::mpsc::Sender`, a `crossbeam_channel::Sender`, or
+        // another type the trait is implemented for.
+        let mut watcher = notify::recommended_watcher(notify_tx).unwrap();
+
+        // Add a path to be watched. All files and directories at that path and
+        // below will be monitored for changes.
+        let options = notify::Config::default()
+            .with_poll_interval(std::time::Duration::from_secs(1))
+            .with_follow_symlinks(false);
+        watcher.configure(options).unwrap();
+        watcher
+            .watch(std::path::Path::new("."), RecursiveMode::Recursive)
+            .unwrap();
+        // Block forever, printing out events as they come in
+        for res in notify_rx {
+            match res {
+                Ok(event) => {
+                    println!("event: {:?}", event);
+                    // TODO: Run lesson
+                }
+                Err(e) => println!("watch error: {:?}", e),
+            }
+        }
+    });
 
     let mut app = Router::new()
         .route("/", get(routes::handle_index))
+        .route("/ws", get(routes::handle_websocket))
         .route("/assets/{path}", get(routes::handle_assets))
         .route(
             "/projects/{project_id}/lessons/{lesson_id}",

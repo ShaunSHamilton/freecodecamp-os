@@ -1,12 +1,45 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Header } from "./components/header";
 import { Landing } from "./templates/landing";
 import { useQuery } from "@tanstack/react-query";
 import { getState } from "./utils/fetch";
 import { ProjectLesson } from "./templates/project";
 
+// Dynamically construct the socket url based on `window.location`
+let socket = new WebSocket(
+  `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${
+    window.location.host
+  }`
+);
+
 export function App() {
   const [project_id, set_project_id] = useState<number | null>(null);
+  function connectToWebSocket() {
+    socket.onopen = function (_event) {
+      //
+    };
+    socket.onmessage = function (event) {
+      console.log(event);
+    };
+    socket.onclose = function (_event) {
+      // Try to reconnect
+      setTimeout(() => {
+        socket = new WebSocket(
+          `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${
+            window.location.host
+          }`
+        );
+        connectToWebSocket();
+      }, 1000);
+    };
+
+    return () => {
+      console.log("socket closing");
+      socket.close();
+    };
+  }
+
+  useEffect(connectToWebSocket, []);
 
   // If `project_id`, get current `lesson_id`
   const stateQuery = useQuery({

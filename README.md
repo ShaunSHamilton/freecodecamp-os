@@ -160,3 +160,30 @@ Gets the Markdown file for the lesson data.
     - Add `/tests/cancel` to websockets?
 - Backend
   - [ ] Before/After hooks
+  - [ ] Watch for file changes
+    - Run tests on change
+
+Maybe write something to work as a spinnable service to run tests.
+
+How to pass information around?
+
+- FS
+- HTTP requests (servers + clients)
+- STDIO
+
+Each runner should be a sandboxed process.
+
+---
+
+- server controls what is passed to runner
+- config is static description of what server sees
+- runner requires subset of config
+- each impl Runner handles creating temp files
+  - who decides where temp files are?
+  - who creates manifest?
+- parser controls code (test, hooks)
+- runner controls test state
+
+Initial implementation has temp files handled by runner. Post-mvp will make this configurable.
+
+Manifest will be created by runner.

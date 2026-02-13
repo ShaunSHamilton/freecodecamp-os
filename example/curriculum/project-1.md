@@ -96,12 +96,20 @@ assert(__a == 1);
 assert.fail("Click the > button to go to the next lesson");
 ```
 
-### --before-each--
+Something py.
 
-#### --cmd--
+```python,runner=python
+print(__a)
+```
+
+### --before-each--
 
 ```js,runner=node
 const __a = 1;
+```
+
+```python,runner=python
+__a = 1
 ```
 
 ## 3

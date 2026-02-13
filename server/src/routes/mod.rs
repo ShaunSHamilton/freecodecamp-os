@@ -2,7 +2,7 @@
 use std::{path::PathBuf, process::Command, str::FromStr};
 
 use axum::{
-    extract::{Path, State},
+    extract::{ws::WebSocket, Path, State, WebSocketUpgrade},
     http::header::{CACHE_CONTROL, CONTENT_TYPE},
     response::{Html, IntoResponse, Response},
     Json,
@@ -11,6 +11,7 @@ use axum::{
 use include_dir::{include_dir, Dir};
 
 use config::{FreeCodeCampConf, Lesson, LessonMarker, Project};
+use runner::run_lesson;
 
 use crate::{
     errors::AppError,
@@ -98,29 +99,7 @@ pub async fn handle_run_tests(State(state): State<AppState>, Json(meta): Json<Le
     // Get lesson
     let lesson = read_lesson(meta.project_id, meta.lesson_id);
     // Call runner
-    let runners = state.config.runners;
-    // Run before alls
-    let before_all = lesson.before_all;
-
-    for test in lesson.tests {
-        // Run before each
-        // Run test
-        let mut runner = runners.get(&test.runner).unwrap().split_whitespace();
-        let runner_name = runner.next().unwrap();
-        let runner_args = runner.collect::<Vec<&str>>();
-        let output = Command::new(runner_name)
-            .args(runner_args)
-            .arg(test.code)
-            .output()
-            .unwrap();
-
-        println!("{}", String::from_utf8_lossy(&output.stdout));
-        eprintln!("{}", String::from_utf8_lossy(&output.stderr));
-        // Run after each
-    }
-
-    // Run after alls
-    let after_all = lesson.after_all;
+    run_lesson(lesson);
 }
 
 /// Handles a lesson submission.
@@ -130,4 +109,12 @@ pub async fn handle_post_project(Path((project_id, lesson_id)): Path<(usize, usi
 
 pub async fn handle_cancel_tests() {
     todo!();
+}
+
+pub async fn handle_websocket(ws: WebSocketUpgrade, State(state): State<AppState>) -> Response {
+    ws.on_upgrade(|socket| handle_socket(socket, state))
+}
+
+async fn handle_socket(socket: WebSocket, state: AppState) {
+    todo!()
 }
