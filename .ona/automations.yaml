@@ -1,0 +1,46 @@
+tasks:
+  installJsDeps:
+    name: Install JS dependencies
+    description: Install Node/Bun dependencies for the client.
+    command: |
+      bun install
+    triggeredBy:
+      - postDevcontainerStart
+
+  installRustTools:
+    name: Install Rust tools
+    description: Install watchexec, typeshare, and mdbook CLIs.
+    command: |
+      cargo install watchexec-cli typeshare-cli mdbook
+    triggeredBy:
+      - postDevcontainerStart
+
+  buildClient:
+    name: Build client
+    description: Build the Vite/React client into dist.
+    command: |
+      bun run build:client
+    triggeredBy:
+      - postDevcontainerStart
+    dependsOn:
+      - installJsDeps
+
+  cargoBuild:
+    name: Cargo build
+    description: Compile the Rust workspace.
+    command: |
+      cargo build
+    triggeredBy:
+      - postDevcontainerStart
+    dependsOn:
+      - installRustTools
+
+services:
+  devServer:
+    name: Dev Server
+    description: Watches for changes, rebuilds client, and runs the Rust server.
+    commands:
+      start: |
+        bun run watch
+      ready: |
+        curl -sf http://localhost:8080
