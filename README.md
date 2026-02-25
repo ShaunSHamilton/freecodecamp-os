@@ -1,201 +1,91 @@
 # freecodecamp-os
 
-## v4 Development
-
-https://github.com/freeCodeCamp/freeCodeCampOS/issues/589
-
-## Commands
-
-Start docs server:
-
-```bash
-/$ mdbook serve
-```
-
 ## Structure
 
-- `/app` desktop application
-  - `bins/` external binaries included in app
-  - `dist/` frontend build
-  - `src/` frontend source
-  - `src-tauri/` backend source
 - `/cli` cli
 - `/client` client
   - `dist/` build
 - `/config` config
 - `/docs` docs
   - `dist/` build
+- `example`
 - `/parser` parser
 - `/server` server
 - `/runner` runner
 
-## Runner
+## `cli`
 
-Each test is given a runner name following:
+The CLI is used to set up new curricula, add/remove projects, and validate the config.
 
-````markdown
-```<code_lang>,runner=<runner_name>
-<test>
-```
+### TODO
 
-```<code_lang>
-<test>
-```
-````
+- [ ] update deps
+- [ ] add project creation command
+- [ ] add project deletion command
+- [ ] add config validation command
 
-Where, if no runner name is specified, the Markdown codeblock language is used as the runner name.
+## `client`
 
-A Runner is no more than a command that is passed a JSON-serializable string of the test meta - hooks, helpers, test code.
+The client is the main interface for users to read the curriculum content, and see test output/results.
 
-Whether or not the runner is run in parallel or not is determined by the project configuration.
+### TODO
 
-By default, if no matching `runners` key is found for a runner name, the included `runner` binary is tried. If the test runner is not available in the `runner` binary, the test is skipped, and a warning is logged.
+- [ ] update with latest tooling
+  - ensure use of vite rolldown
+  - update whole project to use `bun` instead of `npm`
 
-### Considerations
+## `config`
 
-- Create a temp directory + files (project) to run tests
-- How to handle `before-all`, `before-each`, `after-all`, `after-each` hooks?
-  - Specifically, shared state/global
-- Helpers?
-  - Always import a `helpers` module?
-- Each test is run within equivalent of `main` function as a `function`
+A library of types relating to the structure of `freecodecamp.conf.json` as well as common types shared between `cli`, `client`, `parser`, `server`, and `runner`.
 
-1. Runner creates a temp directory with configured files.
-1. Server gives test string to runner.
-1. Runner writes test string to file with needed stuffs.
+### TODO
 
-Permanent test dir for cached helpers/crates?
+- [ ] update with full types needed to match feature parity with `https://github.com/freeCodeCamp/freeCodeCampOS.git`
 
-Force locations of test dir. Force location of helpers.
+## `docs`
 
-```console
-.fcc-tests/
-|- rust/
-|  |- target/
-|  |- src/
-|  |  |- main.rs
-|  |  |- helpers.rs
-|  |- Cargo.toml
-|- node/
-|  |- node_modules/
-|  |- src/
-|  |  |- index.js
-|  |  |- helpers.js
-|  |- package.json
-|- python/
-|  |- src/
-|  |  |- main.py
-|  |  |- helpers.py
-|- bash/
-|  |- src/
-|  |  |- main.sh
-|  |  |- helpers.sh
-```
+MDBook docs for this application.
 
-### Example
+### TODO
 
-```rust
-let output = helpers::custom_func();
-println!("{}", output);
-```
+- [ ] copy and update what is from `https://github.com/freeCodeCamp/freeCodeCampOS.git`
 
-Produces:
+## `example`
 
-```rust
-mod helpers;
+A basic curriculum using `freecodecamp-os` for testing and on-boarding.
 
-fn main() {
-  test_1();
-}
+### TODO
 
-fn test_1() {
-  let output = helpers::custom_func();
-  println!("{}", output);
-}
-```
+- [ ] copy and update what is from `https://github.com/freeCodeCamp/freeCodeCampOS.git` in the `self` folder.
 
----
+## `parser`
 
-Config is mandatory for using bin. Runner only needs part of config (passed by bin), and parser only needs part of the config (passed by bin).
+The parser handles the curriculum Markdown files - converting them into structures the server can use.
 
-Config is made of pieces defined by runner and parser (+ more).
+### TODO
 
-Config probably should not be a public library.
+- [ ] implement parser similar to `https://github.com/freeCodeCamp/freeCodeCampOS.git` in `.freeCodeCamp/tooling/parser.js`
 
----
+## `server`
 
-## Routes
+The server serves and communicates with the client, watches the filesystem for changes, and calls the test runner.
 
-- `GET /`
+### TODO
 
-Landing page with list of projects.
+- [ ] update with latest tooling
+  - ensure use of axum
+  - finish impl of websockets
+- [ ] embedded client dist as static for distribution
+- [ ] copy similar functionality from `https://github.com/freeCodeCamp/freeCodeCampOS.git` in `.freeCodeCamp/tooling/` folder
+- [ ] use `runner`
+- [ ] use `parser`
 
-- `GET /<PROJECT>/<LESSON_ID>`
+## `runner`
 
-Example: `/0/0`
+The runner is a library with functions to executes code, and handle file seeding.
 
-Gets the Markdown file for the lesson data.
+### TODO
 
-- `POST /config { locale: <LOCAL> }`
-
-- `POST /reset-lesson?project_id=<PROJECT_ID>&lesson_id=<LESSON_ID>`
-- `POST /reset-project?project_id=<PROJECT_ID>`
-
-## Websockets
-
-- `CONNECT`
-- `RUN_TESTS`
-- `UPDATE_TESTS`
-- `UPDATE_CONSOLE`
-- `UPDATE_HINTS`
-- `CANCEL_TESTS`
-- `RESPONSE`
-
-## TODO
-
-- Frontend
-  - [ ] Improve dev setup to handle reloads whilst keeping state
-  - [ ] Websockets for tests
-    - Create connection on `/tests/run` request, and kill it once all tests complete
-    - Add `/tests/cancel` to websockets?
-- Backend
-  - [ ] Before/After hooks
-  - [ ] Watch for file changes
-    - Run tests on change
-
-Maybe write something to work as a spinnable service to run tests.
-
-How to pass information around?
-
-- FS
-- HTTP requests (servers + clients)
-- STDIO
-
-Each runner should be a sandboxed process.
-
----
-
-- server controls what is passed to runner
-- config is static description of what server sees
-- runner requires subset of config
-- each impl Runner handles creating temp files
-  - who decides where temp files are?
-  - who creates manifest?
-- parser controls code (test, hooks)
-- runner controls test state
-
-Initial implementation has temp files handled by runner. Post-mvp will make this configurable.
-
-Manifest will be created by runner.
-
-- configuration options to add:
-  - temp test dir
-
-### Runner
-
-- Exports multiple language runners
-- needs code to run + context
-  - tests
-  - hooks
-  - project config
-- should not deal with files unrelated to tests
+- [ ] add functions for seeding files
+- [ ] add python runner
+- [ ] add rust runner
