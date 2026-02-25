@@ -11,3 +11,4 @@ config = { path = "../config" }
 serde_json = "1.0.138"
 tempfile = "3.16.0"
 tracing = "0.1.44"
+thiserror = "2.0.17"

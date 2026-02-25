@@ -42,7 +42,6 @@ async function runTest(test, project, hooks) {
 
 async function main() {
   const MANIFEST = JSON.parse(await readFile(MANIFEST_PATH, "utf-8"));
-  const CONFIG = JSON.parse(await readFile(MANIFEST.config_path, "utf-8"));
   const PROJECT = JSON.parse(await readFile(MANIFEST.project_path, "utf-8"));
   const HOOKS = JSON.parse(await readFile(MANIFEST.hooks_path, "utf-8"));
 
@@ -59,8 +58,8 @@ async function main() {
   const tests = [];
   for (const testPath of MANIFEST.test_paths) {
     const test = JSON.parse(await readFile(testPath, "utf-8"));
-    test.path = testPath;
     test.state.kind = "NEUTRAL";
+    test.path = testPath;
     await writeFile(testPath, JSON.stringify(test), "utf-8");
     tests.push(test);
   }

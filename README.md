@@ -187,3 +187,15 @@ Each runner should be a sandboxed process.
 Initial implementation has temp files handled by runner. Post-mvp will make this configurable.
 
 Manifest will be created by runner.
+
+- configuration options to add:
+  - temp test dir
+
+### Runner
+
+- Exports multiple language runners
+- needs code to run + context
+  - tests
+  - hooks
+  - project config
+- should not deal with files unrelated to tests

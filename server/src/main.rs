@@ -36,7 +36,7 @@ async fn main() {
         let (notify_tx, notify_rx) = std::sync::mpsc::channel::<notify::Result<Event>>();
 
         // Use recommended_watcher() to automatically select the best implementation
-        // for your platform. The `EventHandler` passed to this constructor can be a
+        // for platform. The `EventHandler` passed to this constructor can be a
         // closure, a `std::sync::mpsc::Sender`, a `crossbeam_channel::Sender`, or
         // another type the trait is implemented for.
         let mut watcher = notify::recommended_watcher(notify_tx).unwrap();
@@ -65,7 +65,7 @@ async fn main() {
     let mut app = Router::new()
         .route("/", get(routes::handle_index))
         .route("/ws", get(routes::handle_websocket))
-        .route("/assets/{path}", get(routes::handle_assets))
+        .fallback_service(ServeDir::new("client/dist"))
         .route(
             "/projects/{project_id}/lessons/{lesson_id}",
             get(routes::handle_project_lesson),
